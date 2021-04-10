@@ -1,0 +1,93 @@
+{#{% extends "account/base.html" %}#}
+{% extends "golab/patient/base.html" %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+{% block body_class %}bg-gradient-dark{% endblock %}
+{% block content %}
+    <div class="d-flex align-items-center align-content-center w-100" style="min-height: 100vh">
+        <div class="container">
+
+            <!-- Outer Row -->
+            <div class="row justify-content-center">
+
+                <div class="col-12 text-center">
+
+                    <div class="card o-hidden border-0 shadow-lg my-5 mx-auto" style="max-width: 450px">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h2 text-gray-900 mb-4 text-center">{% trans "Sign In" %}</h1>
+                                        </div>
+                                        {% if form.errors %}
+                                            <div class="show-error mb-2">
+                                                {% for error in form.non_field_errors %}
+                                                    <div class="invalid-feedback">
+                                                        <strong>{{ error|escape }}</strong>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                        {% endif %}
+                                        <form class="login" method="POST" action="{% url 'account_login' %}"
+                                              novalidate>
+
+                                            {% csrf_token %}
+                                            {% if redirect_field_value %}
+                                                <input type="hidden" name="{{ redirect_field_name }}"
+                                                       value="{{ redirect_field_value }}"/>
+                                            {% endif %}
+                                            <div class="form-group text-left {% if form.login.errors %}has-error{% endif %}">
+                                                {% bootstrap_field form.login show_label=False %}
+                                                {% if form.login.errors %}
+                                                    {% for error in form.login.errors %}
+                                                        <div class="invalid-feedback">
+                                                            <strong>{{ error|escape }}</strong>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-group text-left
+{% if form.password.errors %}has-error{% endif %}">
+                                                {% bootstrap_field form.password show_label=False %}
+                                            </div>
+                                            <div class="form-group text-left">
+                                                <div class="custom-control custom-checkbox small">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                           id="customCheck">
+                                                    <label class="custom-control-label" for="customCheck">
+                                                        Remember Me</label>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary btn-user btn-block"
+                                                    type="submit">{% trans "Sign In" %}</button>
+
+                                        </form>
+                                        <hr>
+                                        <div class="text-center">
+                                            <a class="small"
+                                               href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+                                        </div>
+                                        <div class="text-center">
+                                            <a class="small" href="{{ signup_url }}">Create an Account!</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+

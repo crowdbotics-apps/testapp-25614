@@ -1,0 +1,17 @@
+{% url 'logged_account_profile' as profile %}
+{% url 'logged_account_profile_info' as profile_info %}
+{% url 'account_update' as profile_update %}
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if request.get_full_path == profile %}active{% endif %}"
+           href="{{ profile }}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.get_full_path == profile_update %}active{% endif %}"
+           href="{{ profile_update }}">Update</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.get_full_path == profile_info %}active{% endif %}"
+           href="{{ profile_info }}">Info</a>
+    </li>
+</ul>

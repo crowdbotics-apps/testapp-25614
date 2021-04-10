@@ -1,0 +1,207 @@
+{#{% extends "account/base.html" %}#}
+{% extends "golab/patient/base.html" %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+{% block body_class %}bg-gradient-dark{% endblock %}
+{% block content %}
+    <div class="d-flex align-items-center align-content-center w-100" style="min-height: 100vh">
+        <div class="container">
+
+            <!-- Outer Row -->
+            <div class="row justify-content-center">
+
+                <div class="col-12 text-center">
+
+                    <div class="card o-hidden border-0 shadow-lg my-5 mx-auto" style="max-width: 450px">
+                        <div class="card-body p-5">
+                            <div class="text-center position-relative d-flex mb-3">
+                                <img class="img-fluid h-auto w-auto mx-auto" src=
+                                        "{% static 'img/golab-fin-transparent-01.png' %}"
+                                     style="max-height: 50px"
+                                     alt="GoLab">
+                            </div>
+                            <div id="email-card">
+                                <div class="text-center">
+                                    <div class="h4 mb-4 text-cente text-dark font-weight-bold text-uppercase"
+                                    >{% trans "Sign In" %}</div>
+                                </div>
+                                <div id="email-errors"></div>
+                                <div id="email-messages"></div>
+                                <form id="submit_for_otp" class="login" method="POST" action=
+                                        "{% url 'api_users:patient_login_send_otp' %}"
+                                      novalidate>
+
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" id="id_username" name="username"
+                                               class="form-control" placeholder="Email" required>
+                                    </div>
+
+                                    <button class="btn btn-user btn-block bg-gradient-dark-blue text-white d-flex
+                                    align-items-center text-center justify-content-center"
+                                            type="submit">
+                                        <div class="spinner-border spinner-border-sm text-light mr-2" role="status"></div>
+                                        {% trans "Send Verification Code" %}</button>
+
+                                </form>
+                            </div>
+                            <div id="verify-otp-card" class="d-none">
+                                <div class="text-center">
+                                    <h1 class="h2 text-gray-900 mb-4 text-center">{% trans "Verify Code" %}</h1>
+                                </div>
+                                <div id="otp-errors"></div>
+                                <div id="otp-messages"></div>
+                                <form id="form-verify-otp" class="login" method="POST" action=
+                                        "{% url 'api_users:patient_login_send_otp' %}"
+                                      novalidate>
+
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" id="id_otp" name="otp"
+                                               class="form-control" placeholder="Enter Code" required>
+                                    </div>
+
+                                    <button class="btn btn-primary btn-user btn-block" type="submit">
+                                        {% trans "Submit" %}
+                                    </button>
+                                    <div class="form-group text-center mt-2 mb-1">
+                                        <div class="small text-primary cursor-pointer mb-1" onclick="resendOTP(event)
+">Resend Code
+                                        </div>
+                                        <div class="small text-primary cursor-pointer" onclick="openEmailForm(event)">
+                                            Change Email
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            {#                            <hr>#}
+                            {#                            <div class="text-center">#}
+                            {#                                <a class="small"#}
+                            {#                                   href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>#}
+                            {#                            </div>#}
+                            {#                            <div class="text-center">#}
+                            {#                                <a class="small" href="{% url 'account_signup' %}">Create an Account!</a>#}
+                            {#                            </div>#}
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).on('submit', '#submit_for_otp', function (event) {
+            event.preventDefault();
+            let username = $('#id_username').val();
+            if (username.length > 0) {
+                $.ajax({
+                    method: 'post',
+                    dataType: 'json',
+                    data: {
+                        username: username
+                    },
+                    url: '{% url "api_users:patient_login_send_otp" %}',
+                    success: function (res) {
+                        console.log(res);
+                        $('#email-errors').html('');
+                        $('#email-card').hide();
+                        $('#verify-otp-card').removeClass('d-none');
+                        $('#verify-otp-card').show();
+                        $('#otp-errors').html('');
+                        $('#otp-messages').html(
+                            `<div class="alert alert-success py-2 border-0">${res.message}</div>`
+                        );
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        $('#email-errors').html(
+                            `<div class="invalid-feedback">${err.responseJSON.message}</div>`
+                        );
+                        $('#otp-messages').html('');
+                    }
+                });
+            }
+        });
+
+        function resendOTP(event) {
+            event.preventDefault();
+            let username = $('#id_username').val();
+            if (username.length > 0) {
+                $.ajax({
+                    method: 'post',
+                    dataType: 'json',
+                    data: {
+                        username: username
+                    },
+                    url: '{% url "api_users:patient_login_send_otp" %}',
+                    success: function (res) {
+                        console.log(res);
+                        $('#email-errors').html('');
+                        $('#email-card').hide();
+                        $('#verify-otp-card').removeClass('d-none');
+                        $('#verify-otp-card').show();
+                        $('#otp-errors').html('');
+                        $('#otp-messages').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+
+
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        $('#email-errors').html(
+                            `<div class="alert alert-danger">${err.message}</div>`
+                        );
+                    }
+                });
+            }
+        }
+
+        function openEmailForm(event) {
+            event.preventDefault();
+            $('#email-card').show();
+            $('#email-errors').html('');
+            $('#otp-errors').html('');
+            $('#verify-otp-card').addClass('d-none');
+            $('#verify-otp-card').hide();
+        }
+
+        $(document).on('submit', '#form-verify-otp', function (event) {
+            event.preventDefault();
+            let email = $('#id_username').val();
+            let otp_number = $('#id_otp').val();
+
+            $.ajax({
+                method: 'post',
+                url: '{% url 'golab:patient_login_verify_otp' %}',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    email: email,
+                    otp: otp_number
+                },
+                success: function (res) {
+                    window.location.href = '{% url 'golab:patient_dashboard' %}'
+                },
+                error: function (err) {
+                    console.log(err);
+                    $('#otp-errors').html(
+                        `<div class="alert alert-danger">${err.responseJSON.message}</div>`
+                    )
+                }
+            });
+        })
+    </script>
+{% endblock %}
+
+

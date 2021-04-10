@@ -1,109 +1,96 @@
-
+{% load i18n %}
 {% load staticfiles %}
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin/styles.css' %}">
+{#    <link rel="stylesheet" href="{% static 'css/sb-admin-2.css' %}">#}
+{#    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/themes/tim.css" type="text/css" media="screen" charset="utf-8">
-    <link rel="stylesheet" href={% static 'css/main.css' %} >
-
-    <title>{{ customtext.title|striptags }}</title>
-  </head>
-  <body>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand editable" data-remote="{{ customtext.api }}" data-field="{{ customtext.field }}" href="/">
-              {{ customtext.title|safe }}
-          </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="nav navbar-nav ml-auto">
-                    {% if not user.is_authenticated %}
-                        <li class="nav-item">
-                          <a class="nav-link" href="{% url 'account_login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                          <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
-                        </li>
+    {% block styles %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<div id="wrapper" class="">
+    <div id="content-wrapper" class="d-flex flex-column" style="min-height: 100vh">
+        <div id="content">
+            {% if request.user.is_authenticated %}
+                {% include 'golab/patient/snippets/top_nav.html' %}
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% if request.user.is_authenticated %}
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
                     {% endif %}
-                </ul>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">{% trans 'Sign Out' %}</button>
+                    </div>
+                </form>
             </div>
-        </nav>
-        {% if user.is_superuser %}
-            <span class="btn btn-success top-right" id="editor" title="Change to inline editor">Edit</span>
-        {% endif %}
-        {% block content %}
-        {% endblock %}
+        </div>
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    <script>
-        $('#editor').on('click', function (e) {
-            if (e.target.innerText === 'Edit'){
-                e.target.innerText = 'Cancel';
-                var editor = new MediumEditor('.editable');
-                editor.subscribe('editableBlur', function (event, editable) {
-                    var url = editable.dataset.remote;
-                    var field = editable.dataset.field;
-                    var data = {};
-                    data[field] = editable.innerHTML;
-                    api_call(url, data);
-                });
-            } else {
-                e.target.innerText = 'Edit';
-                window._mediumEditors.forEach(function (editor) {
-                    if (editor)
-                        editor.destroy();
-                })
-            }
-        });
-
-        function api_call(url, data, method='PATCH'){
-            $.ajax({
-                type: method,
-                url: url,
-                data: data,
-                dataType: 'json',
-                headers: {
-                    'X-CSRFToken': $.cookie('csrftoken')
-                },
-                success: function (response) {
-                    toastr.success('Update Successful')
-                },
-                error: function (response) {
-                    toastr.error('Update Unsuccessful')
-                }
-            });
-        }
-        toastr.options = {
-          "positionClass": "toast-bottom-right",
-          "fadeIn": 300,
-          "fadeOut": 800,
-          "timeOut": 2000,
-          "extendedTimeOut": 1000
-        }
-    </script>
-  </body>
+{% endif %}
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+{#<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
+{#<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>#}
+<!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Custom scripts for all pages-->
+<script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+{#<script>#}
+{#    $(function () {#}
+{#        $('.datepicker').datepicker({#}
+{#            autoclose: true,#}
+{#            dateFormat: 'yy-mm-dd',#}
+{#            changeMonth: true,#}
+{#            changeYear: true#}
+{#        }).on('hide', function () {#}
+{#            if (!this.firstHide) {#}
+{#                if (!$(this).is(":focus")) {#}
+{#                    this.firstHide = true;#}
+{#                    // this will inadvertently call show (we're trying to hide!)#}
+{#                    this.focus();#}
+{#                }#}
+{#            } else {#}
+{#                this.firstHide = false;#}
+{#            }#}
+{#        })#}
+{#            .on('show', function () {#}
+{#                if (this.firstHide) {#}
+{#                    // careful, we have an infinite loop!#}
+{#                    $(this).datepicker('hide');#}
+{#                }#}
+{#            })#}
+{#    });#}
+{#</script>#}
+</body>
 </html>
-

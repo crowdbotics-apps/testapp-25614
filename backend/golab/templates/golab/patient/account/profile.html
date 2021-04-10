@@ -1,0 +1,25 @@
+{% extends 'golab/patient/base.html' %}
+{% block title %}
+    {{ request.user.username }} | Profile
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                {% include 'golab/patient/snippets/profile_nav.html' %}
+                <div class="tab-content">
+                    <div class="card-title text-primary font-weight-bold">Account:</div>
+                    <h5>{{ request.user.get_full_name }}</h5>
+                    <p class="mb-1">Email: {{ request.user.email }}</p>
+                    <p class="mb-1">Phone: {{ request.user.phone_number }}</p>
+                    <hr>
+                    <div class="card-title text-primary font-weight-bold">Profile Info:</div>
+                    <p class="mb-1">Date of Birth: {{ request.user.user_profile.date_of_birth }}</p>
+                    <p class="mb-1">Contact Number: {{ request.user.user_profile.contact_number }}</p>
+                    <p class="mb-1">ZIP Code: {{ request.user.user_profile.zip_code }}</p>
+                    <p class="mb-1">Street Adress: {{ request.user.user_profile.street_address }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

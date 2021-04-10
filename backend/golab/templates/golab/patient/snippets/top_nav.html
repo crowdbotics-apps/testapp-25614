@@ -1,0 +1,94 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<link rel="stylesheet" href="https://embed.acuityscheduling.com/embed/button/21084613.css"
+      id="acuity-button-styles"/>
+<script src="https://embed.acuityscheduling.com/embed/button/21084613.js" async></script>
+<nav id="top-main-nav" class="navbar navbar-expand-lg bg-white">
+    <a class="navbar-brand" href="{% url 'golab:patient_dashboard' %}">
+        <img class="navbar-logo" src="{% static 'img/golab-fin-transparent-01.png' %}">
+    </a>
+    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#TopNavCollapse"
+            aria-controls="TopNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="TopNavCollapse">
+        <ul class="navbar-nav mr-auto">
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_patient %}
+{#                    <li class="nav-item">#}
+{#                        <a href="https://app.acuityscheduling.com/schedule.php?owner=21084613" target="_blank"#}
+{#                           class="acuity-embed-button"#}
+{#                           style="background: #035990; color: #fff; padding: 8px 12px; border: 0px; -webkit-box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;-moz-box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;border-radius: 4px; text-decoration: none; display: inline-block;">Schedule#}
+{#                            Appointment</a>#}
+{#                    <a class="btn btn-sm nav-link bg-gradient-dark-blue text-white" href="{% url 'golab:patient_appointment_type_select' %}">#}
+{#                        Schedule Appointment</a>#}
+{#                    </li>#}
+                    {% comment %}
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Appointments
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                        <a class="dropdown-item" href="{% url 'golab:patient_appointment_create' %}">Create</a>
+                    </div>
+                </li>
+                {% endcomment %}
+
+                {% endif %}
+            {% endif %}
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="#">Tests</a>
+            </li> -->
+        </ul>
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+{#            <li class="nav-item dropdown">#}
+{#                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"#}
+{#                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                    Tests#}
+{#                </a>#}
+{#                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">#}
+{#                    <a class="dropdown-item" href="{% url 'golab:test_results' %}">Export Results</a>#}
+{#                </div>#}
+{#            </li>#}
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    {{ request.user.email }}
+                                </span>
+                    <i class="fas fa-user-circle"></i>
+
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                     aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="{% url 'golab:logged_patient_profile' %}">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Profile
+                    </a>
+{#                    <a class="dropdown-item" href="{% url 'golab:patient_account_update' %}">#}
+{#                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>#}
+{#                        Settings#}
+{#                    </a>#}
+{#                    <a class="dropdown-item" href="{% url 'account_change_password' %}">#}
+{#                        <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>#}
+{#                        {% trans 'Change Password' %}#}
+{#                    </a>#}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+

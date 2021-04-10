@@ -1,0 +1,48 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+    <div class="card mx-1 mx-sm-2 mx-md-3 mt-4">
+        <div class="card-header bg-gradient-dark-blue text-white font-weight-bold d-flex align-items-center">
+            <span>{{ title }}</span>
+{#            {% if request.user.is_authenticated and request.user.is_superuser %}#}
+{#                <button id="pull-clients" class="btn bg-white text-primary ml-auto">Pull clients</button>#}
+{#            {% endif %}#}
+        </div>
+
+    </div>
+    <div class="card-body bg-white px-0">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for client in clients %}
+                    <tr id="row-{{ client.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td id="name-{{ client.id }}" class="name text-dark font-weight-bold">
+                            {{ client.firstName }}</td>
+                        <td>{{ client.lastName }}</td>
+                        <td class="price text-info font-weight-bold">{{ client.email }}</td>
+                        <td class="">
+                            {{ client.phone }}
+                        </td>
+                        <td>{{ type.type }}</td>
+                        <td> {{ client.notes }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
+

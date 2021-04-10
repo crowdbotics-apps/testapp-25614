@@ -1,0 +1,28 @@
+{% load staticfiles %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8"/>
+
+</head>
+<body>
+<table border="0">
+    <tr>
+        <td>
+            <img src="{{ domain }}{% static 'img/golab-fin-logo.png' %}" style="max-width: 250px" alt="GoLab">
+        </td>
+    </tr>
+</table>
+<table border="0" style="margin-top: 20px">
+    <tr>
+        <td>
+            <p>Your GoLab verification code is <strong
+                    style="background-color: #035990; color: #fff; height: 30px; padding: 5px 10px;">{{ code }}</strong>
+            </p>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

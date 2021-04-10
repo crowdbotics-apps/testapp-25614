@@ -1,0 +1,85 @@
+{% extends 'golab/patient/base.html' %}
+{% load patient_appointments %}
+{% block content %}
+    <div class="container mt-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mb-0">Logged in as <a class="text-primary font-weight-bold"
+                                                 href="{% url 'golab:logged_patient_profile' %}">{{ request.user }}</a>
+                </h4>
+            </div>
+        </div>
+
+
+    </div>
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_patient %}
+            <div class="container my-3">
+                <div class="card-deck">
+                    <!--div class="card">
+                        <div class="card-body text-center">
+                            <a class="btn btn-lg bg-gradient-dark-blue text-white" href=
+                                    "{% url 'golab:patient_appointment_type_select' %}">
+                                Schedule Appointment</a>
+                        </div>
+                    </div-->
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <a class="btn btn-lg bg-gradient-dark-blue text-white" href=
+                                    "{% url 'golab:test_results' %}">
+                                View Test Results</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        {% endif %}
+    {% endif %}
+    <div class="container">
+        <div class="card mb-3">
+            {% patient_appointments_list request.user.email as appointments %}
+            <div class="card-header bg-gradient-dark-blue font-weight-bold text-white">Your Appointments</div>
+            <div class="card-body {% if appointments %}p-0{% endif %}">
+                {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Duration</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>End Time</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for appointment in appointments %}
+                                <tr id="appointment-row-{{ appointment.id }}">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="text-primary">{{ appointment.type }}</td>
+                                    <td class="text-dark">{{ appointment.category }}</td>
+                                    <td>{{ appointment.duration }}</td>
+                                    <td>{{ appointment.date }}</td>
+                                    <td>{{ appointment.time }}</td>
+                                    <td>{{ appointment.endTime }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-secondary text-dark">No appointments</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card d-none">
+            <div class="card-header bg-gradient-dark-blue font-weight-bold text-white">Test Status</div>
+            <div class="card-body text-center">
+                <button type="button" class="btn btn-primary">Export</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

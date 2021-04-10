@@ -1,0 +1,167 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static " admin/css/changelists.css" %}">
+{% if cl.formset %}
+<link rel="stylesheet" type="text/css" href="{% static " admin/css/forms.css" %}">
+{% endif %}
+{% if cl.formset or action_form %}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endif %}
+{{ media.css }}
+{% if not actions_on_top and not actions_on_bottom %}
+<style>
+      #changelist table thead th:first-child {width: inherit};
+
+
+
+
+
+
+
+</style>
+{% endif %}
+<style>
+       .form-row { display: flex; align-items: baseline; }
+       .form-group { margin-right: 10px; display: flex; flex-direction: column; }
+       #search_button { height: 28px };
+
+
+
+
+
+
+
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet"
+      type="text/css"/>
+{% endblock %}
+{% block search %}
+
+{% if cl.search_fields %}
+<div id="toolbar">
+    <form class="form-inline" id="changelist-search" method="get" onsubmit="return false;">
+        <div class="form-row"><!-- DIV needed for valid HTML -->
+            <div class="form-group">
+                <label for="acuity_appointment__appointment_data__firstName__icontains">First Name</label>
+                <input
+                        type="text"
+                        name="acuity_appointment__appointment_data__firstName__icontains"
+                        class="form-control"
+                        value="{{ request.GET.acuity_appointment__appointment_data__firstName__icontains }}"
+                        placeholder="First Name"
+                        id="acuity_appointment__first_name__icontains"/>
+
+            </div>
+            <div class="form-group">
+                <label for="acuity_appointment__appointment_data__lastName__icontains">Last Name</label>
+                <input
+                        type="text"
+                        name="acuity_appointment__appointment_data__lastName__icontains"
+                        class="form-control"
+                        value="{{ request.GET.acuity_appointment__appointment_data__lastName__icontains }}"
+                        placeholder="Last Name"
+                        id="acuity_appointment__appointment_data__lastName__icontains"/>
+
+            </div>
+            <div class="form-group">
+                <label for="acuity_appointment__appointment_data__phone__icontains">Phone No.</label>
+                <input
+                        type="text"
+                        name="acuity_appointment__appointment_data__phone__icontains"
+                        class="form-control"
+                        value="{{ request.GET.acuity_appointment__appointment_data__phone__icontains }}"
+                        placeholder="Phone Number"
+                        id="acuity_appointment__appointment_data__phone__icontains"/>
+
+            </div>
+            <div class="form-group">
+                <label for="processing_date__gte">Min Date</label>
+                <input type="text"
+                       name="processing_date__gte"
+                       class="datepicker form-control"
+                       placeholder="Min Date"
+                       value="{{ request.GET.processing_date__gte }}"
+                       id="processing_date__gte"
+                       autocomplete="false"
+                >
+                <small class="form-text text-muted">
+                    only get appointments this date and after
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="processing_date__lte">Max Date</label>
+                <input type="text"
+                       name="processing_date__lte"
+                       class="datepicker form-control"
+                       placeholder="Max Date"
+                       value="{{ request.GET.processing_date__lte }}"
+                       id="processing_date__lte"
+                >
+                <small class="form-text text-muted">
+                    only get appointments this date and before
+                </small>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <input type="submit" id="search_button" value="{% trans 'Search' %}">
+            </div>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+<script>
+ $(document).ready(function () {
+
+     $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+     });
+     function encodeQueryData(data) {
+            const ret = [];
+            var q = '?'
+            var start_date = ''
+            data.map(function (value) {
+                if (value.name == 'processing_date__gte') { start_date = value.value }
+                if (value.name === 'processing_date__lte' && value.value === '' && start_date) {
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    var yyyy = today.getFullYear() + 1;
+
+                    value.value = yyyy  + '-' + mm + '-' + dd;
+                }
+                if (value.value)
+                q += value.name + '=' + encodeURIComponent(value.value) + '&'
+            });
+            return q.slice(0, -1);
+     }
+     $('#search_button').on('click', function() {
+        var data = $('#changelist-search').serializeArray();
+        var querystring = encodeQueryData(data);
+        console.log(querystring);
+        var url = window.location.href.split('?')[0];
+        window.open(url + querystring, '_self');
+     });
+
+ });
+
+
+
+
+
+
+</script>
+{% endblock %}

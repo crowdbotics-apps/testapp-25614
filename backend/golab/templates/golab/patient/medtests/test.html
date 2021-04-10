@@ -1,0 +1,24 @@
+{% extends 'golab/patient/base.html' %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="form-group row justify-content-center">
+<form method="post">
+        {% csrf_token %}
+        {{ ctx.mform.as_p }}
+        {{ form.as_p }}
+      
+        <input type=submit value="submit" />
+    </form>
+<div>
+{% endblock %}
+{% block scripts %}
+<script>
+        $(document).ready(function () {
+            $('p:contains("Acuity")').each((idx,elem)=>{$(elem).css("display", "none");})
+            $('input').each((idx,elem)=>{console.log($(elem).addClass('form-control'))})
+            $('select').each((idx,elem)=>{console.log($(elem).addClass('form-control'))})
+            $('textarea').each((idx,elem)=>{console.log($(elem).addClass('form-control'))})
+        });
+    </script>
+{% endblock %}

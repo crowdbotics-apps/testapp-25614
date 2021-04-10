@@ -1,0 +1,364 @@
+<html>
+
+<head>
+    <title>Go LAB</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .img {
+
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .container {
+            max-width: 720px;
+            width: 595px !important;
+            margin-bottom: 3rem !important;
+            margin-top: 3rem !important;
+        }
+
+        .row {
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+            display: flex;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem !important
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .mx-auto {
+            margin-right: auto !important;
+            margin-left: auto !important;
+        }
+
+        .mb-3 {
+            margin-bottom: .8rem !important;
+        }
+
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: transparent;
+            border-top: 1px solid black !important;
+        }
+
+        .border-dark {
+            border-color: #343a40 !important;
+        }
+
+        .border {
+            border: 1px solid #dee2e6 !important;
+        }
+
+        .mt-5 {
+            margin-top: 3rem !important;
+        }
+
+        .table td,
+        .table th {
+            padding: .40rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .col,
+        .col-1,
+        .col-10,
+        .col-11,
+        .col-12,
+        .col-2,
+        .col-3,
+        .col-4,
+        .col-5,
+        .col-6,
+        .col-7,
+        .col-8,
+        .col-9,
+        .col-auto,
+        .col-lg,
+        .col-lg-1,
+        .col-lg-10,
+        .col-lg-11,
+        .col-lg-12,
+        .col-lg-2,
+        .col-lg-3,
+        .col-lg-4,
+        .col-lg-5,
+        .col-lg-6,
+        .col-lg-7,
+        .col-lg-8,
+        .col-lg-9,
+        .col-lg-auto,
+        .col-md,
+        .col-md-1,
+        .col-md-10,
+        .col-md-11,
+        .col-md-12,
+        .col-md-2,
+        .col-md-3,
+        .col-md-4,
+        .col-md-5,
+        .col-md-6,
+        .col-md-7,
+        .col-md-8,
+        .col-md-9,
+        .col-md-auto,
+        .col-sm,
+        .col-sm-1,
+        .col-sm-10,
+        .col-sm-11,
+        .col-sm-12,
+        .col-sm-2,
+        .col-sm-3,
+        .col-sm-4,
+        .col-sm-5,
+        .col-sm-6,
+        .col-sm-7,
+        .col-sm-8,
+        .col-sm-9,
+        .col-sm-auto,
+        .col-xl,
+        .col-xl-1,
+        .col-xl-10,
+        .col-xl-11,
+        .col-xl-12,
+        .col-xl-2,
+        .col-xl-3,
+        .col-xl-4,
+        .col-xl-5,
+        .col-xl-6,
+        .col-xl-7,
+        .col-xl-8,
+        .col-xl-9,
+        .col-xl-auto {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .col-md-4 {
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 33.333333%;
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+
+        .footer {}
+
+        .font-11 {
+            font-size: 11px;
+        }
+
+        .font-12 {
+            font-size: 12px;
+        }
+
+        .font-h1 {
+            font-size: 18px;
+        }
+
+        .bold-paragraph {
+            font-size: 13px;
+            padding-top: 12px;
+            padding-bottom: 0px;
+        }
+
+        .result-header {
+            background-color: #035990;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: Helvetica, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row mb-5" style="margin-top: 0">
+            <div class="img text-center"><img src="{{image_src}}" width="400px"></div>
+        </div>
+        <div class="text-center row mb-4">
+            <div class="mx-auto">
+                <h1 class="font-h1">Patient Test Result Report</h1>
+            </div>
+
+        </div>
+        <div class="row mb-3">
+
+            <table class="table">
+
+                <tbody>
+                    <tr>
+                        <td class="border border-dark font-12">
+                            <p><b>Patient Name: </b> {{ test.acuity_appointment.appointment_data.firstName }}
+                                {{test.acuity_appointment.appointment_data.lastName }}</p>
+                            <p><b>DOB: </b> {{ date_of_birth }}</p>
+                            <p><b>Sex: </b>{{ gender }}</p>
+                        </td>
+                        <td class="border border-dark font-12">
+                            <p><b>Collection Date: </b>{{ test.collection_date|date }}</p>
+                            <p><b>Processing Date: </b>{{ test.processing_date|date }}</p>
+                            <p><b>Location: </b>{{ test.location }}</p>
+                        </td>
+                        <td class="border border-dark font-12">
+
+                            <p><b>Specimen Type: </b>{{ test.get_specimen_type_display }}</p>
+                            <p><b>Test Type: </b>
+                                {% for test_type in test.test_type.all %}
+                                {{ test_type.type_name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-3">
+
+            <table class="table">
+                <thead>
+                    <tr class="text-center">
+                        <th class="border border-dark result-header">TEST</th>
+                        <th class="border border-dark result-header">RESULT</th>
+                        <th class="border border-dark result-header">INTERPRETATION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-dark" style="text-align: left">
+                            <p class="bold-paragraph"><b>{% for test_type in test.test_type.all %}
+                                    {{ test_type.type_description }}
+                                    {% endfor %}</b></p>
+                        </td>
+                        <td class="border border-dark">
+                            <p class="bold-paragraph"><b>{{ test.get_result_display }}&#42;</b></p>
+                        </td>
+                        <td class="border border-dark">
+                            <p class="bold-paragraph" style="line-height: 80%;">{{ test.iterpretation }}&#42;&#42;</p>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-3">
+            <p class="font-11"> * SARS-Cov-2 is considered a notifiable condition under Washington Administrative Code
+                (WAC)
+                246-101,
+                Notifiable Conditions. Results for COVID-19 testing will be reported to the Washington State Department
+                of
+                Health as required by law.<br>
+                **Refer to the attached FDA Fact Sheet for Patients included with this report for more
+                information regarding testing, intended use and interpretation of results. For further questions
+                regarding this result, consultation with your primary
+                care physician is recommended.</p>
+        </div>
+        <div class="row mb-3">
+            <ol style="margin-bottom: 10px">
+                <li><span class="font-11"> An anterior nares or mid-turbinate specimen collected by a healthcare
+                        professional or self-collected by the
+                        patient is acceptable when the patient is in an appropriate clinical setting or under
+                        appropriate
+                        observation.</span></li>
+                <li><span class="font-11">This test is not yet approved or cleared by the United States FDA. When there
+                        are no FDA-approved or
+                        cleared tests available, and other criteria are met, FDA can make tests available under an
+                        emergency
+                        access mechanism called an Emergency Use Authorization (EUA), for use in authorized
+                        laboratories. The
+                        EUA for this test is supported by the Secretary of Health and Human Service’s (HHS’s)
+                        declaration that
+                        circumstances exist to justify the emergency use of in vitro diagnostics for the detection
+                        and/or diagnosis
+                        of the virus that causes COVID-19. This EUA will remain in effect for the duration of the
+                        COVID-19
+                        declaration justifying emergency of IVDs, under Section 564(b)(1) of the Act 21, U.S.C. §
+                        360bbb-3(b)(1),
+                        unless the authorization is terminated or revoked sooner.</span></li>
+            </ol>
+            {% if test_type_description == 'SARS-CoV-2, NAA RT-PCR Test' %}
+            <h1 style="margin-bottom: 2px; margin-top: 0px"> FidaLab Reference Laboratory: Methods and Limitations</h1>
+
+            <p class="font-11"><b>Method:</b> Multiplex real-time RT-PCR test intended for the presumptive qualitative
+                detection of nucleic acid from
+                SARS-CoV-2.</p>
+            <p class="font-11" style="margin-bottom: 0"><b>Disclaimer:</b> FidaLab implements safeguards to avoid
+                technical errors throughout the testing process. FidaLab is
+                not responsible for errors in
+                specimen collection, transportation, and/or other errors made prior to receipt at our laboratory.</p>
+            <div style="margin:0; padding:0">
+                <img src="{{fidalab_signature_src}}" width="100%" style="margin:0; padding:0">
+            </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            {% if test_type_description == 'SARS-CoV-2, NAA RT-PCR Test' %}
+            <table class="table footer" style="margin-top: 30px; padding: 20px">
+                {% else %}
+            <table class="table footer" style="margin-top: 270px; padding: 20px">
+                {% endif %}
+
+                <tbody>
+                    <tr style="padding-top: 15px">
+                        <td style="width: 238px">
+
+                            <span style="margin:0; padding:0;  white-space: nowrap;">GoLab CLIA # 50D2189165
+                            </span><br />
+                            {% if test_type_description == 'SARS-CoV-2, NAA RT-PCR Test' %}
+                            <span style="margin-top:0; padding:0">FidLab CLIA # 50D2146193 </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <p></p>
+                        </td>
+                        <td>
+                            <p></p>
+                        </td>
+                        <td>
+                            <p><a>www.GoLabSolutions.com</a>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

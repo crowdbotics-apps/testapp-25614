@@ -1,0 +1,834 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_template_tags %}
+{% load dashboard_index_tags %}
+{% load dashboard_tags %}
+{% block styles %}
+    <style>
+        table > td {
+            font-size: 14px;
+        }
+
+        .appointment-id-th {
+            min-width: 130px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css"
+          rel="stylesheet" type="text/css"/>
+    <div class="card filter-card mx-1 mx-ms-2 mx-md-3 mt-2 mt-sm-2 mt-md-3">
+        <div class="card-header bg-gradient-dark-blue text-white font-weight-bold d-flex align-items-center">
+            <div class="text-white">{{ title }}</div>
+            <button class="btn btn-outline-secondary btn-toggle-filter-box ml-auto d-md-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="card-body p-0 d-none d-md-block">
+            <div class="p-2">
+                <form id="filterForm" method="get" role="form">
+                    <div class="form-row mb-2">
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>First Name</label>
+                            <input type="text" name="firstName" class="form-control form-control-sm"
+                                   placeholder="First name" value="{{ request.GET.firstName }}">
+
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Last Name</label>
+                            <input type="text" name="lastName" class="form-control form-control-sm"
+                                   placeholder="Last name"
+                                   value="{{ request.GET.lastName }}">
+
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Email</label>
+                            <input type="text" name="email" class="form-control form-control-sm" placeholder="Email"
+                                   value="{{ request.GET.email }}">
+
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Phone</label>
+                            <input type="text" name="phone" class="form-control form-control-sm" placeholder="Phone"
+                                   value="{{ request.GET.phone }}">
+
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Min Date</label>
+                            <input type="text" name="minDate" class="datepicker form-control form-control-sm"
+                                   placeholder="Min Date"
+                                   value="{{ request.GET.minDate }}">
+                            <small class="form-text text-muted">
+                                only get appointments this date and after
+                            </small>
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Max Date</label>
+                            <input type="text" name="maxDate" class="datepicker form-control form-control-sm"
+                                   placeholder="Max Date"
+                                   value="{{ request.GET.maxDate }}">
+                            <small class="form-text text-muted">
+                                only get appointments this date and before
+                            </small>
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-3">
+                            {% appointment_types as types %}
+                            <label for="appointmentTypeID">Appointment Type</label>
+                            <select id="appointmentTypeID" class="form-control form-control-sm" name="appointmentTypeID">
+                                <option
+                                        {% if request.GET.appointmentTypeID is None %}
+                                            selected{% endif %}>--select--
+                                </option>
+                                {% for type in types %}
+                                    <option value="{{ type.id }}"
+                                            {% if request.GET.appointmentTypeID == type.id|stringformat:"i" %}selected{% endif %}
+                                    >{{ type.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-3">
+                            {% calender_list as calenders %}
+                            <label for="calendarID">Calendar</label>
+                            <select id="calendarID" class="form-control form-control-sm" name="calendarID">
+                                <option
+                                        {% if request.GET.calendarID is None %}
+                                            selected{% endif %}>--select--
+                                </option>
+                                {% for calender in calenders %}
+                                    <option value="{{ calender.id }}"
+                                            {% if request.GET.calendarID == calender.id|stringformat:"i" %}selected{% endif %}
+                                    >{{ calender.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-2">
+                            <label>Max Items</label>
+                            <input type="number" min="10" max="500" name="max" class="form-control form-control-sm"
+                                   placeholder="Max Items"
+                                   value="{{ request.GET.max }}">
+                        </div>
+                        <div class="col-6 col-sm-3 col-md-3 col-lg-3">
+                            <label for="direction">Order By</label>
+                            <select id="direction" class="form-control form-control-sm" name="direction">
+                                {% if request.GET.direction == 'DESC' %}
+                                    <option value="DESC">Descending</option>
+                                {% endif %}
+                                {% if request.GET.direction == 'ASC' %}
+                                    <option value="ASC">Ascending</option>
+                                {% endif %}
+                                {% if request.GET.direction != 'DESC' %}
+                                    <option value="DESC">Descending</option>
+                                {% endif %}
+                                {% if request.GET.direction != 'ASC' %}
+                                    <option value="ASC">Ascending</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-10">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <input type="submit" class="btn btn-sm btn-primary" value="Search">
+
+                                <button class="btn btn-sm btn-danger" onclick="resetFilterForm(event)">Reset</button>
+
+                                <button class="btn btn-sm btn-success" onclick="exportCSV(event)">Export</button>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <div class="card mx-1 mx-ms-2 mx-md-3 mt-1">
+        <div class="card-body py-1 px-0">
+            <div class="d-flex mb-2">
+                <a href="javascript:;" class="btn btn-sm btn-primary openAddEditAllPopup ml-auto"
+                   style="float: right;">Edit All</a>
+            </div>
+            <div class="table-responsive" style="max-height: 650px">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>SMS</th>
+                        <th>
+                            <input class="_selected_action_all" type="checkbox" name="_selected_action_all"/>
+                        </th>
+                        <th class="appointment-id-th">Appointment ID</th>
+                        <th>Appointment Type</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Appointment date</th>
+                        <th>Start Time</th>
+                        <th>Test Type</th>
+                        <th>Test Status</th>
+                        <th>Test results</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for appointment in appointments %}
+                        {% getTestFromDict appointment.id appointment_data  as test %}
+                        {% getTestTypeIdFromDict appointment.id appointment_data as type_ids %}
+                        {% getSendSmsNotificationFromDict appointment.id appointment_data  as notify %}
+                        <tr id="row-{{ appointment.id }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td><input type="checkbox" name="send_sms_notification" {% if notify.marked %}
+                                       checked="checked" {% endif %} data-appointment="{{ appointment.id }}"
+                                       id="notify-{{ appointment.id }}" class="send_sms_notification"/></td>
+                            <td class="action-checkbox"><input type="checkbox" name="_selected_action"
+                                                               value="{{ appointment.id }}" class="action-select"
+                                                               data-result="{{ test.pk }}"
+                                                               data-appointment="{{ appointment.id }}"
+                                                               data-user="{{ test.acuity_appointment.user.pk }}"
+                                                               data-user_email="{{ appointment.email }}"
+                                                               data-testtype="{{ type_ids }}"
+                                                               data-status="{{ test.test_status }}"
+                                                               data-testresult="{{ test.result }}"
+                                                               data-collection="{{ test.collection_date|date:'Y-m-d' }}"
+                                                               data-processing="{{ test.processing_date|date:'Y-m-d' }}"
+                                                               data-location="{{ test.location }}"
+                                                               data-specimen="{{ test.specimen_type }}"
+                                                               data-interpretation="{{ test.iterpretation }}"></td>
+                            <td>{{ appointment.id }}</td>
+                            <td>{{ appointment.type }} </td>
+                            <td class="name font-weight-bolder text-dark">
+                                {{ appointment.firstName }}</td>
+                            <td class="name font-weight-bolder text-dark">{{ appointment.lastName }}</td>
+                            <td> {% getDob appointment.forms %} </td>
+                            <td>{{ appointment.date }}</td>
+                            <td>{{ appointment.time }}</td>
+                            <td class="test-types">
+                                {% getTestTypes appointment.id %}
+                            </td>
+                            <td>{{ test.get_test_status_display }}</td>
+                            <td>{{ test.get_result_display }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:dashboard_acuity_appointment_detail' appointment.id %}"
+                                   class="btn btn-sm btn-primary mr-1 mb-1">
+                                    View
+                                </a><a href="javascript:;"
+                                       class="btn btn-sm btn-primary openAddEditPopup" data-result="{{ test.pk }}"
+                                       data-appointment="{{ appointment.id }}"
+                                       data-user="{{ test.acuity_appointment.user.pk }}"
+                                       data-user-fullname="{{ appointment.firstName }} {{ appointment.lastName }}"
+                                       data-user-email="{{ appointment.email }}"
+                                       data-testtype="{{ type_ids }}" data-status="{{ test.test_status }}"
+                                       data-testresult="{{ test.result }}"
+                                       data-collection="{{ test.collection_date|date:'Y-m-d' }}"
+                                       data-processing="{{ test.processing_date|date:'Y-m-d' }}"
+                                       data-location="{{ test.location }}" data-specimen="{{ test.specimen_type }}"
+                                       data-interpretation="{{ test.iterpretation }}">
+                                Edit
+                            </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="testResultModal" tabindex="-1" role="dialog" aria-labelledby="testResultModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="color: #10669D;">
+                    <h3 class="modal-title" id="testResultModalLabel">Add/Edit Test Result</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="text-primary user-email"></h4>
+                    <form>
+                        <div id="alert_msg" style="display: none" class="alert alert-danger alert-dismissible fade show"
+                             role="alert">
+                            <div id="msg">
+
+                            </div>
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="acuity_appointment_id"/>
+                        <input type="hidden" id="result_id"/>
+                        <input type="hidden" id="user" value=""/>
+                        <input type="hidden" id="user-email" value=""/>
+                        {#                        <div class="form-group">#}
+                        {#                            <label for="user"><b> Select User</b></label>#}
+                        {#                            <select id="user" class="form-control">#}
+                        {#                                {% for user in users %}#}
+                        {#                                    <option value="{{ user.pk }}">{{ user.email }}#}
+                        {#                                        ({{ user.first_name }} {{ user.last_name }})#}
+                        {#                                    </option>#}
+                        {#                                {% endfor %}#}
+                        {#                            </select>#}
+                        {#                        </div>#}
+                        <div class="form-group">
+                            <label for="test_type"><b> Test Type</b></label>
+                            <select class="form-control" id="test_type" multiple>
+                                {% for test_type in test_types %}
+                                    <option value="{{ test_type.pk }}">{{ test_type.type_name }} {{ test_type.type_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="test_status"><b> Test Status</b></label>
+                            <select class="form-control" id="test_status">
+                                <option value="">---------</option>
+                                {% for test_status in test_statuses %}
+                                    <option value="{{ test_status.0 }}">{{ test_status.1 }}</option>
+                                {% endfor %}
+                            </select>
+                            <small id="test_status_disclaimer" class="d-none form-text text-muted">
+                                After test status is changed to "Results Ready", sms and email notification that results
+                                are ready would be sent to the patient.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="test_result"><b>Test Result</b></label>
+                            <select class="form-control" id="test_result">
+                                <option value="">---------</option>
+                                {% for test_result in test_results %}
+                                    <option value="{{ test_result.0 }}">{{ test_result.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="collection_date"><b>Collection Date</b></label>
+                            <input type="text" class="datepicker form-control" name="collection_date"
+                                   id="collection_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="processing_date"><b>Processing Date</b></label>
+                            <input type="text" class="datepicker form-control" name="processing_date"
+                                   id="processing_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="location"><b>Location</b></label>
+                            <input type="text" class="form-control" name="location" id="location">
+                        </div>
+                        <div class="form-group">
+                            <label for="specimen_type"><b>Specimen Type</b></label>
+                            <select class="form-control" id="specimen_type">
+                                <option value="">---------</option>
+                                {% for specimen_type in specimen_types %}
+                                    <option value="{{ specimen_type.0 }}">{{ specimen_type.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="interpretation"><b>Interpretation</b></label>
+                            <input type="text" class="form-control" name="interpretation" id="interpretation">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="notifyUser">Send Notification</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save_changes">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ResultModalAll" tabindex="-1" role="dialog" aria-labelledby="testResultModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="color: #10669D;">
+                    <h3 class="modal-title" id="testResultModalLabelAll">Edit Tests Result</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="alert_msg_all" style="display: none" class="alert alert-danger alert-dismissible fade show"
+                         role="alert">
+                        <div id="msg_all">
+
+                        </div>
+                        <button type="button" class="close" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form>
+                        <input type="hidden" id="acuity_appointment_id"/>
+                        <input type="hidden" id="result_id"/>
+                        <div class="form-group">
+                            <label for="test_type"><b> Test Type</b></label>
+                            <select class="form-control" id="test_type_all" multiple>
+                                {% for test_type in test_types %}
+                                    <option value="{{ test_type.pk }}">{{ test_type.type_name }} {{ test_type.type_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="test_status"><b> Test Status</b></label>
+                            <select class="form-control" id="test_status_all">
+                                <option value="">---------</option>
+                                {% for test_status in test_statuses %}
+                                    <option value="{{ test_status.0 }}">{{ test_status.1 }}</option>
+                                {% endfor %}
+                            </select>
+                            <small id="test_status_disclaimer_all" class="d-none form-text text-muted">
+                                After test status is changed to "Results Ready", sms and email notification that results
+                                are ready would be sent to the patient.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="test_result"><b>Test Result</b></label>
+                            <select class="form-control" id="test_result_all">
+                                <option value="">---------</option>
+                                {% for test_result in test_results %}
+                                    <option value="{{ test_result.0 }}">{{ test_result.1 }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="collection_date"><b>Collection Date</b></label>
+                            <input type="text" class="datepicker form-control" name="collection_date"
+                                   id="collection_date_all">
+                        </div>
+                        <div class="form-group">
+                            <label for="processing_date"><b>Processing Date</b></label>
+                            <input type="text" class="datepicker form-control" name="processing_date"
+                                   id="processing_date_all">
+                        </div>
+                        <div class="form-group">
+                            <label for="location"><b>Location</b></label>
+                            <input type="text" value="Mobile Lab" class="form-control" name="location"
+                                   id="location_all">
+                        </div>
+                        <div class="form-group">
+                            <label for="specimen_type"><b>Specimen Type</b></label>
+                            <select class="form-control" id="specimen_type_all">
+                                <option value="">---------</option>
+                                {% for specimen_type in specimen_types %}
+                                    <option value="{{ specimen_type.0 }}">{{ specimen_type.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="interpretation"><b>Interpretation</b></label>
+                            <input type="text" class="form-control" name="interpretation" id="interpretation_all">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" id="notify_users_all" data-toggle="tooltip"
+                            data-placement="top" title="Notify selected patients with test status 'Results ready'">Send
+                        Notification
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save_changes_all">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js"></script>
+
+    <script>
+        function resetFilterForm(event) {
+            event.preventDefault();
+            $('#filterForm').trigger('reset');
+            {#$(this).find('input[type=date]').val('')#}
+            $('#filterForm input[type=date]').each(function () {
+                $(this).val('')
+            });
+            window.location.href = '{% url 'dashboard:dashboard_acuity_appointments' %}';
+            {#$('#filterForm').submit();#}
+        }
+
+        function encodeQueryData(data) {
+            const ret = [];
+            var q = '?'
+            data.map(function (value) {
+                q += value.name + '=' + value.value + '&'
+            });
+            return q.slice(0, -1);
+        }
+
+        function exportCSV(event) {
+            event.preventDefault();
+            var data = $('#filterForm').serializeArray();
+
+            var querystring = encodeQueryData(data);
+            csv_url = '{% url 'dashboard:dashboard_acuity_appointments_csv' %}';
+            win = window.open(csv_url + '?' + querystring)
+            win.focus()
+
+
+        }
+
+        $(document).ready(function () {
+            // toggle test result disclaimer
+            $('#test_status').on('change', function (e) {
+                if ($(this).val() === 'ready') {
+                    $('#test_status_disclaimer').removeClass('d-none');
+                } else {
+                    $('#test_status_disclaimer').addClass('d-none');
+                }
+            });
+            $('#test_status_all').on('change', function (e) {
+                if ($(this).val() === 'ready') {
+                    $('#test_status_disclaimer_all').removeClass('d-none');
+                } else {
+                    $('#test_status_disclaimer_all').addClass('d-none');
+                }
+            });
+
+            //.
+            $(document).on('click', '.openAddEditAllPopup', function () {
+                $('#ResultModalAll').modal('show');
+            });
+
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            $(document).on('click', '.openAddEditPopup', function () {
+                var result_id = $(this).data('result');
+                var acuity_appointment_id = $(this).data('appointment');
+                var user_email = $(this).data('user-email');
+                var user = $(this).data('user');
+                var user_fullname = $(this).data('user-fullname')
+                var test_types = $(this).data('testtype');
+                var test_status = $(this).data('status');
+                var test_result = $(this).data('testresult');
+                var collection_date = $(this).data('collection');
+                var processing_date = $(this).data('processing');
+                var location = $(this).data('location');
+                var speciemen_type = $(this).data('specimen');
+                var interpretation = $(this).data('interpretation');
+                $('#acuity_appointment_id').val(acuity_appointment_id);
+                $('#result_id').val(result_id);
+                if (user !== '') {
+                    $('#user').val(user);
+                }
+                if (user_email !== '') {
+                    $('#user-email').val(user_email);
+                }
+                if (user_email !== '') {
+                    $('#testResultModal .user-email').html('<small><b>' + user_fullname + '</b> - <i>' + user_email + '</i></small>');
+                }
+                if (test_types != 'None') {
+                    $.each(test_types, function (index, value) {
+                        $("#test_type option[value=" + value + "]").prop('selected', 'selected');
+                    });
+                } else {
+                    $("#test_type option:selected").prop('selected', '');
+                }
+                if (test_status != 'None') {
+                    $('#test_status').val(test_status);
+                } else {
+                    $('#test_status option:eq(0)').attr('selected', true);
+                }
+                if (test_result != 'None') {
+                    $('#test_result').val(test_result);
+                } else {
+                    $('#test_result option:eq(0)').attr('selected', true);
+                }
+                if (collection_date != '') {
+                    $('#collection_date').val(collection_date);
+                } else {
+                    $('#collection_date').val('');
+                }
+                if (processing_date != '') {
+                    $('#processing_date').val(processing_date);
+                } else {
+                    $('#processing_date').val('');
+                }
+                if (speciemen_type != 'None') {
+                    $('#specimen_type').val(speciemen_type);
+                } else {
+                    $('#speciemen_type option:eq(0)').attr('selected', true);
+                }
+                if (location != 'None') {
+                    $('#location').val(location);
+                } else {
+                    $('#location').val('Mobile Lab');
+                }
+                if (interpretation != 'None') {
+                    $('#interpretation').val(interpretation);
+                } else {
+                    $('#interpretation').val('---------');
+                }
+                $('#testResultModal').modal('show');
+            });
+            $(document).on('click', '#save_changes', function () {
+                let data = {
+                    "csrfmiddlewaretoken": "{{csrf_token}}",
+                    "result_id": $("#result_id").val(),
+                    "acuity_appointment_id": $("#acuity_appointment_id").val(),
+                    "user": $("#user").val(),
+                    "user_email": $('#user-email').val(),
+                    "test_type": JSON.stringify($("#test_type").val()),
+                    "test_status": $("#test_status").val(),
+                    "test_result": $("#test_result").val(),
+                    "collection_date": $("#collection_date").val(),
+                    "processing_date": $("#processing_date").val(),
+                    "specimen_type": $("#specimen_type").val(),
+                    "interpretation": $("#interpretation").val(),
+                    "location": $("#location").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'dashboard:add_edit_test_result' %}",
+                    data: data,
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            var error_html = '';
+                            $.each(data.message, function (index, value) {
+                                error_html += '<ul><b>' + index + '</b>';
+                                $.each(value, function (i, item) {
+                                    error_html += ' <li>' + item + '</li>';
+                                });
+                                error_html += '</ul>';
+                            });
+                            $('#msg').html(error_html);
+                            $('#alert_msg').show();
+                            $('.modal-body').focus();
+                        }
+                    },
+                    error: function (error) {
+                        alert("Sorry, There is An error ");
+                    }
+                });
+            });
+
+            // Bulk send notification
+            $(document).on('click', '#notify_users_all', function () {
+                // all appointment checked data
+                let appointments_checked_data = [];
+                $(".action-checkbox input[type='checkbox']:checked").each((idx, elem) => {
+
+                    appointments_checked_data.push({
+                        result_id: $(elem).data('result'),
+                        acuity_appointment_id: $(elem).val(),
+                        user: $(elem).data('user'),
+                        user_email: $(elem).data('user_email'),
+                        collection_date: $(elem).data('collection'),
+                        processing_date: $(elem).data('processing'),
+                        specimen_type: $(elem).data('specimen'),
+                        interpretation: $(elem).data('interpretation'),
+                        location: $(elem).data('location'),
+                    });
+                });
+                //.
+                var appointment_post_data = {
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    appointments_checked_data: JSON.stringify(appointments_checked_data)
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'dashboard:bulk_notify_patient' %}",
+                    data: appointment_post_data,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#save_changes_all').prop('disabled', true);
+                            window.location.reload();
+                        } else {
+                            $('#save_changes_all').prop('disabled', false);
+                            var error_html = '';
+                            console.log(data.errors)
+                            $.each(data.message, function (index, value) {
+                                error_html += '<ul><b>' + index + '</b>';
+                                $.each(value, function (i, item) {
+                                    error_html += ' <li>' + item + '</li>';
+                                });
+                                error_html += '</ul>';
+                            });
+                            $('#msg_all').html(error_html);
+                            $('#alert_msg_all').show();
+                            $('.modal-body').focus();
+                        }
+                    },
+                    error: function (error) {
+                        alert('Sorry, There is An error ');
+                    },
+                });
+
+            });
+
+
+            // Bulk edit appointments
+            $(document).on('change', '#test_result_all', function () {
+                if ($(this).val() === 'detected') {
+                    $('#interpretation_all').val("SARS-CoV-2 was detected in your sample.");
+                } else if ($(this).val() === 'not_detected') {
+                    $('#interpretation_all').val("SARS-CoV-2 was not detected in your sample.");
+                } else {
+                    $('#interpretation_all').val("---------");
+                }
+            });
+            $(document).on('click', '#save_changes_all', function () {
+                // all appointment checked data
+                let appointments_checked_data = [];
+                $(".action-checkbox input[type='checkbox']:checked").each((idx, elem) => {
+
+                    appointments_checked_data.push({
+                        result_id: $(elem).data('result'),
+                        acuity_appointment_id: $(elem).val(),
+                        user: $(elem).data('user'),
+                        user_email: $(elem).data('user_email'),
+                        collection_date: $(elem).data('collection'),
+                        processing_date: $(elem).data('processing'),
+                        specimen_type: $(elem).data('specimen'),
+                        interpretation: $(elem).data('interpretation'),
+                        location: $(elem).data('location'),
+                    });
+                });
+                //.
+                // all appointment checked data in the modal and bulk edit data
+                var appointment_post_data = {
+                    csrfmiddlewaretoken: '{{csrf_token}}',
+                    appointments_checked_data: JSON.stringify(appointments_checked_data),
+                    test_type: JSON.stringify($('#test_type_all').val()),
+                    test_status: $('#test_status_all').val(),
+                    test_result: $('#test_result_all').val(),
+                    collection_date: $('#collection_date_all').val(),
+                    processing_date: $('#processing_date_all').val(),
+                    location: $('#location_all').val(),
+                    specimen_type: $('#specimen_type_all').val(),
+                    interpretation: $('#interpretation_all').val(),
+                };
+                //.
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'dashboard:bulk_add_edit_test_result' %}",
+                    data: appointment_post_data,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#save_changes_all').prop('disabled', true);
+                            window.location.reload();
+                        } else {
+                            $('#save_changes_all').prop('disabled', false);
+                            var error_html = '';
+                            console.log(data.errors)
+                            $.each(data.message, function (index, value) {
+                                error_html += '<ul><b>' + index + '</b>';
+                                $.each(value, function (i, item) {
+                                    error_html += ' <li>' + item + '</li>';
+                                });
+                                error_html += '</ul>';
+                            });
+                            $('#msg_all').html(error_html);
+                            $('#alert_msg_all').show();
+                            $('.modal-body').focus();
+                        }
+                    },
+                    error: function (error) {
+                        alert('Sorry, There is An error ');
+                    },
+                });
+                //.
+            });
+            //.
+
+            $(document).on('change', '#test_result', function () {
+                if ($(this).val() === 'detected') {
+                    $('#interpretation').val("SARS-CoV-2 was detected in your sample.");
+                } else if ($(this).val() === 'not_detected') {
+                    $('#interpretation').val("SARS-CoV-2 was not detected in your sample.");
+                } else {
+                    $('#interpretation').val("---------");
+                }
+            });
+            $(document).on('click', '#notifyUser', function () {
+                let data = {
+                    "csrfmiddlewaretoken": "{{csrf_token}}",
+                    "result_id": $("#result_id").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'dashboard:notify_patient' %}",
+                    data: data,
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            var error_html = '';
+                            $.each(data.message, function (index, value) {
+                                error_html += '<ul><b>' + index + '</b>';
+                                $.each(value, function (i, item) {
+                                    error_html += ' <li>' + item + '</li>';
+                                });
+                                error_html += '</ul>';
+                            });
+                            $('#msg').html(error_html);
+                            $('#alert_msg').show();
+                            $('.modal-body').focus();
+                        }
+                    },
+                    error: function (error) {
+                        alert("Sorry, There is An error ");
+                    }
+                });
+            });
+            $(document).on('change', '.send_sms_notification', function () {
+                var checked = $(this).is(":checked");
+                var acuity_appointment_id = $(this).data('appointment');
+                if (checked) {
+                    send_sms_notification = '1';
+                } else {
+                    send_sms_notification = '0';
+                }
+                let data = {
+                    "csrfmiddlewaretoken": "{{csrf_token}}",
+                    "send_sms_notification": send_sms_notification,
+                    "acuity_appointment_id": acuity_appointment_id
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'dashboard:toggle_notify' %}",
+                    data: data,
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Recorded");
+                        } else {
+                            $('#notify-' + acuity_appointment_id).prop('checked', 'checked');
+                        }
+                        alert(data.message);
+                    },
+                    error: function (error) {
+                        alert("Sorry, There is An error ");
+                    }
+                });
+            });
+            $(document).on('click', '.close', function () {
+                $('#alert_msg').hide();
+            });
+            $('#test_result').trigger('change');
+
+            // select all check boxes
+            $('._selected_action_all').on('change', function(e) {
+               if  ($('._selected_action_all').is(":checked")) {
+                $('.action-select').prop('checked', true);
+               } else {
+                $('.action-select').prop('checked', false);
+               }
+
+            });
+        });
+    </script>
+{% endblock %}

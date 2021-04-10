@@ -1,0 +1,29 @@
+{% extends 'golab/patient/base.html' %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% block title %}
+    {{ request.user.username }} | Profile Update
+{% endblock %}
+{% block content %}
+    <div class="container text-center">
+        <div class="card mx-auto ">
+            <div class="card-body">
+                {% include 'users/snippets/profile_nav.html' %}
+                <div class="tab-content">
+                    <h3>{% trans "Profile Update" %}</h3>
+                    {% bootstrap_messages %}
+                    <form class="text-left" method="POST" action="{% url 'golab:patient_account_update' %}"
+                          class="password_change">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <button type="submit" name="action"
+                                class="btn btn-primary btn-block">{% trans "Update" %}</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

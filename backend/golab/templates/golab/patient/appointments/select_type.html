@@ -1,0 +1,32 @@
+{% extends 'golab/patient/base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% block styles %}
+{% endblock %}
+{% block content %}
+    <div class="container mt-4" style="max-width: 800px">
+        {% if not request.user.is_authenticated %}
+            <div class="logo-box text-center d-flex flex-column align-items-center justify-content-center mb-5">
+                <img class="img-fluid" src="{% static 'img/golab-fin-transparent-01.png' %}" style="max-width: 300px">
+            </div>
+        {% endif %}
+        <div class="card">
+            <div class="card-header font-weight-bold text-white bg-gradient-dark-blue">{{ title }}</div>
+            <div class="card-body">
+                {% for type in types %}
+                    <div>
+                        <a href="https://app.acuityscheduling.com/schedule.php?owner=21084613&appointmentType={{ type.id }}"
+                           target="_blank"
+                           class="acuity-embed-button mb-3"
+                           style="background: #035990; color: #fff; padding: 8px 12px; border: 0px; -webkit-box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;-moz-box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;box-shadow: 0 -2px 0 rgba(0,0,0,0.15) inset;border-radius: 4px; text-decoration: none; display: inline-block;">
+                            {{ type.name }}
+                        </a>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

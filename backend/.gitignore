@@ -1,6 +1,11 @@
 *.pyc
 env/
+venv/
 .terraform
 .env
 staticfiles/
 postgres-data/
+db.sqlite3
+.idea/
+fact_sheets
+/fact_sheets/

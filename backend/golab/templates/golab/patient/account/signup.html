@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block title %}{% trans "Patient Signup" %}{% endblock %}
+{% block styles %}
+    <style>
+    #content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card mx-auto" style="max-width: 800px">
+            <div class="card-body">
+                <h2 class="text-center text-primary">{% trans "Sign Up" %}</h2>
+
+                <p class="text-center">{% blocktrans %}Already have an account? Then please
+                    <a href="{{ login_url }}">Sign In</a>.{% endblocktrans %}</p>
+
+                <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">{% trans "Sign Up" %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

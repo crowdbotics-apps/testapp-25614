@@ -1,0 +1,50 @@
+{% load dashboard_index_tags %}
+<div class="card">
+    <div class="card-header font-weight-bold text-white bg-gradient-dark-blue d-flex align-items-center">
+        <span class="mr-auto">Latest Appointmnets</span>
+        <a class="ml-auto btn bg-white text-primary" href="{% url 'dashboard:dashboard_acuity_appointments' %}">View All</a>
+    </div>
+    <div class="card-body p-0">
+        {% latest_appointments as appointments %}
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>End Time</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for appointment in appointments %}
+                    <tr id="row-{{ appointment.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td class="name font-weight-bolder text-dark">{{ appointment.firstName }}</td>
+                        <td class="name font-weight-bolder text-dark">{{ appointment.lastName }}</td>
+                        <td>{{ appointment.phone }}</td>
+                        <td>{{ appointment.email }}</td>
+                        <td>{{ appointment.date }}</td>
+                        <td>{{ appointment.time }}</td>
+                        <td>{{ appointment.endTime }}</td>
+                        <td>{{ appointment.datetimeCreated|print_acuity_timestamp|date:'d M Y, h:i:s a' }}</td>
+                        <td>
+                            <a href="{% url 'dashboard:dashboard_acuity_appointment_detail' appointment.id %}"
+                               class="btn btn-sm btn-primary">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.core.management import CommandError
 from django.contrib.auth import get_user_model
-from django.db.models import EmailField
 
 
 class Command(BaseCommand):
@@ -14,11 +13,6 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '--email', dest='email', default=None,
-            help='Specifies the email to be updated.',
-        )
-
-        parser.add_argument(
             '--password', dest='password', default=None,
             help='Specifies the password to be updated.',
         )
@@ -27,18 +21,14 @@ class Command(BaseCommand):
         User = get_user_model()
         password = options.get('password')
         username = options.get('username')
-        email = options.get('email')
 
-        username_field_type = type(User._meta.get_field(User.USERNAME_FIELD))
-        username = email if username_field_type == EmailField else username
-        username_type = "email" if username_field_type == EmailField else "username"
         if not password or not username:
-            raise CommandError(f"You need to specify both password and {username_type}.")
+            raise CommandError("You need to specify both password and username.")
 
         try:
-            user = User.objects.get(**{User.USERNAME_FIELD: username})
+            user = User.objects.get(username=username)
             user.set_password(password)
             user.save()
             self.stdout.write("Superuser password reset successful.")
         except User.DoesNotExist:
-            raise CommandError(f"User not found with the given {username_type}.")
+            raise CommandError("User not found with the given username.")

@@ -1,0 +1,144 @@
+{% load staticfiles %}
+<ul class="navbar-nav bg-gradient-dark-blue sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+
+    <a class="sidebar-brand d-flex align-items-center justify-content-center"
+       href="{% url 'dashboard:dashboard_index' %}" title="GoLab">
+        <img class="navbar-logo" src="{% static 'img/golab-fin-transparent-01.png' %}" alt="GoLab">
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    {% url 'dashboard:dashboard_index' as dashboard_index %}
+    <li class="nav-item {% if request.path == dashboard_index %}active{% endif %}">
+        <a class="nav-link" href="{% url 'dashboard:dashboard_index' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Acuity
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    {% url 'dashboard:dashboard_acuity_appointments' as dashboard_acuity_appointments %}
+    {% url 'dashboard:dashboard_acuity_appointment_addons' as dashboard_acuity_appointment_addons %}
+    {% url 'dashboard:dashboard_acuity_appointment_types' as dashboard_acuity_appointment_types %}
+    {% url 'dashboard:patient_notifications' as patient_notifications %}
+    {% url 'dashboard:test_results' as dashboard_test_results %}
+    <li class="nav-item {% if appointment_active %}active{% endif %}">
+        <a class="nav-link" href="{{ dashboard_acuity_appointments }}" data-toggle="collapse"
+           data-target="#collapseAppointments"
+           aria-expanded="true" aria-controls="collapseAppointments">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Appointments</span>
+        </a>
+        <div id="collapseAppointments" class="collapse" aria-labelledby=""
+             data-parent="#accordionSidebar">
+
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {% if request.path == dashboard_acuity_appointments %}active{% endif %}"
+                   href="{{ dashboard_acuity_appointments }}">List</a>
+                <a class="collapse-item {% if request.path == dashboard_acuity_appointment_addons %}active{% endif %}"
+                   href="{{ dashboard_acuity_appointment_addons }}">Addons</a>
+                <a class="collapse-item {% if request.path == dashboard_acuity_appointment_types %}active{% endif %}"
+                   href="{{ dashboard_acuity_appointment_types }}">Types</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Acuity Clients -->
+    {% url 'dashboard:dashboard_acuity_clients' as dashboard_acuity_clients %}
+
+    <li class="nav-item {% if client_active %}active{% endif %}">
+        <a class="nav-link" href="{{ dashboard_acuity_clients }}" data-toggle="collapse"
+           data-target="#collapseClients"
+           aria-expanded="true" aria-controls="collapseClients">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Clients</span>
+        </a>
+        <div id="collapseClients" class="collapse" aria-labelledby=""
+             data-parent="#accordionSidebar">
+
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {% if request.path == dashboard_acuity_clients %}active{% endif %}"
+                   href="{{ dashboard_acuity_clients }}">List</a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item {% if request.path == dashboard_test_results %}active{% endif %}">
+        <a class="nav-link" href="{% url 'dashboard:test_results' %}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Test Results</span></a>
+    </li>
+    <li class="nav-item {% if request.path == patient_notifications %}active{% endif %}">
+        <a class="nav-link" href="{% url 'dashboard:patient_notifications' %}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Patient Notifications</span></a>
+    </li>
+
+
+    {% comment %}
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Addons
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
+           aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Pages</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Login Screens:</h6>
+                <a class="collapse-item" href="login.html">Login</a>
+                <a class="collapse-item" href="register.html">Register</a>
+                <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                <div class="collapse-divider"></div>
+                <h6 class="collapse-header">Other Pages:</h6>
+                <a class="collapse-item" href="404.html">404 Page</a>
+                <a class="collapse-item active" href="blank.html">Blank Page</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item">
+        <a class="nav-link" href="charts.html">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Charts</span></a>
+    </li>
+
+    <!-- Nav Item - Tables -->
+    <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Tables</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+    {% endcomment %}
+
+</ul>
