@@ -1,0 +1,130 @@
+{% extends 'dashboard/base.html' %}
+{% load bootstrap4 %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-3">
+        <div class="card filter-card">
+            <div class="card-header bg-gradient-dark-blue d-flex align-items-center text-white text-white font-weight-bold"
+                 style="font-size: 20px">
+                <div class="mb-0 text-white font-weight-bold">{{ title }}</div>
+                <button class="btn btn-outline-secondary btn-toggle-filter-box ml-auto d-md-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="card-body p-0 d-none d-md-block">
+                <div class="filter-box container-fluid mt-2 mb-2">
+                    <form method="get" class="row w-100">
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.first_name %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.last_name %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.email %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.phone %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.appointment_id %}
+                        </div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3"></div>
+
+                        {#                        {{ filter.form.as_p }}#}
+                        <div class="col-12">
+                            <input type="submit" class="btn btn-primary text-white" value="Search"/>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="font-weight-bold">
+                        <tr>
+                            <td>#</td>
+                            {#                            <td>User</td>#}
+                            <td>First Name</td>
+                            <td>Last Name</td>
+                            <td>Phone</td>
+                            <td>Email</td>
+                            <td>Appointment ID</td>
+                            <td>Test</td>
+                            <td>SMS Status</td>
+                            <td>Email Status</td>
+                            <td>Message</td>
+
+                            <td>Created</td>
+                            <td>Updated</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for notification in notifications %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                {#                                <td>{{ notification.user }}</td>#}
+                                <td style="min-width: 100px">{{ notification.user.first_name }}</td>
+                                <td style="min-width: 100px">{{ notification.user.last_name }}</td>
+                                <td style="width: 1%">{{ notification.user.phone_number }}</td>
+                                <td style="width: 1%">{{ notification.user.email }}</td>
+                                <td class="text-primary font-weight-bold" style="min-width: 130px"
+                                >{{ notification.acuity_appointment.acuity_appointment_id }}</td>
+                                <td style="min-width: 120px">{{ notification.acuity_appointment.test }}</td>
+                                <td style="min-width: 100px">
+                                    {% if notification.sms_status == 'delivered' %}
+                                        <span class="badge badge-success">{{ notification.get_sms_status_display }}</span>
+                                    {% elif notification.sms_status == 'sent' %}
+                                        <span class="badge badge-dark">{{ notification.get_sms_status_display }}</span>
+                                    {% elif notification.sms_status == 'failed' %}
+                                        <span class="badge badge-danger">{{ notification.get_sms_status_display }}</span>
+                                    {% elif notification.sms_status == 'undelivered' %}
+                                        <span class="badge badge-warning">{{ notification.get_sms_status_display }}</span>
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                                <td style="min-width: 120px">
+                                    {% if notification.email_status %}
+                                        <span class="badge badge-success">Sent</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Failed</span>
+                                    {% endif %}</td>
+                                <td style="min-width: 300px">{{ notification.message|truncatechars:40 }}
+                                    {% if notification.message and notification.message|length > 40 %}
+                                        <span class="tooltip-show text-primary font-weight-bold" data-toggle="tooltip"
+                                              title="{{ notification.message }}">more..</span>
+                                    {% endif %}
+                                </td>
+                                <td style="min-width: 150px">{{ notification.created }}</td>
+                                <td style="min-width: 150px">{{ notification.updated }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                {% if is_paginated %}
+                    <div class="d-inline-block mx-auto">
+                        {% bootstrap_pagination page_obj %}
+                    </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        $('.tooltip-show').tooltip({boundary: 'window'})
+    </script>
+{% endblock %}

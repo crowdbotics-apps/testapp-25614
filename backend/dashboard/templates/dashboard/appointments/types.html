@@ -1,0 +1,66 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+    <div class="card mx-1 mx-sm-2 mx-md-3 mt-4">
+        <div class="card-header bg-gradient-dark-blue text-white font-weight-bold">{{ title }}</div>
+        <div class="card-body bg-white px-0">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Color</th>
+                        <th>Type</th>
+                        <th>Schedule</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for type in appointment_types %}
+                        <tr id="row-{{ type.id }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td id="name-{{ type.id }}" class="name text-dark font-weight-bold">{{ type.name }}</td>
+                            <td>
+                                <span class="badge badge-dark">{{ type.duration }}</span></td>
+                            <td class="price text-info font-weight-bold">{{ type.price }}</td>
+                            <td>{{ type.category }}</td>
+                            <td class="">
+                                <span class="type-color-badge badge badge-pill" style="background-color:
+{{ type.color }}"></span>
+                            </td>
+                            <td>{{ type.type }}</td>
+                            <td>
+                                <button class="btn-schedule-view btn btn-sm btn-outline-info"
+                                        data-type="{{ type.id }}"
+                                        data-url="{{ type.schedulingUrl }}">View
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="scheduleModalView" tabindex="-1" role="dialog"
+         aria-labelledby="View Schedule" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe class="d-none w-100" height="600" src=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

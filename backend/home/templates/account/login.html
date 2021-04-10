@@ -1,5 +1,5 @@
-
 {% extends "account/base.html" %}
+{% load staticfiles %}
 {% load bootstrap4 %}
 {% load i18n %}
 {% load account socialaccount %}
@@ -8,7 +8,13 @@
 
 {% block content %}
     <div class="col-md-6 offset-md-3 mt-3">
-        <h1 class="text-center">{% trans "Sign In" %}</h1>
+        <div class="text-center position-relative d-flex mb-3">
+            <img class="img-fluid h-auto w-auto mx-auto" src=
+                    "{% static 'img/golab-fin-transparent-01.png' %}"
+                 style="max-height: 50px"
+                 alt="GoLab">
+        </div>
+        <h1 class="text-center text-uppercase font-weight-bold">{% trans "Sign In" %}</h1>
         <p class="text-center">
             {% blocktrans %}
                 Don't have an account? Then please <a href="{{ signup_url }}">Sign Up</a>.
@@ -18,11 +24,11 @@
             {% csrf_token %}
             {% bootstrap_form form %}
             {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
             {% endif %}
             <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
-            <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <a class="button secondaryAction"
+               href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         </form>
     </div>
 {% endblock %}
-

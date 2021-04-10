@@ -1,0 +1,161 @@
+@import "golab_variables";
+@import "../../scss/sb-admin-2";
+
+.bg-ui-dark-blue {
+  background-color: $dark_blue;
+}
+
+.bg-ui-light-blue {
+  background-color: $light_blue;
+}
+
+
+.bg-gradient-dark-blue {
+  background: rgb(25, 111, 167);
+  background: linear-gradient(180deg, rgba(25, 111, 167, 1) 0%, rgba(3, 89, 144, 1) 80%);
+}
+.invalid-feedback{
+  display: block !important;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+#top-main-nav {
+  position: relative;
+
+  .navbar-brand {
+    position: relative;
+    max-height: 100%;
+    max-width: 150px;
+  }
+
+  .navbar-logo {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .navbar-nav {
+    .nav-link {
+      color: $gray-900;
+    }
+
+    .nav-item.active {
+      .nav-link {
+        color: $purple;
+      }
+    }
+  }
+}
+
+#accordionSidebar {
+  .sidebar-brand {
+    position: relative;
+    background-color: #fff;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+  }
+}
+
+.type-color-badge {
+  min-height: 15px;
+  min-width: 40px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+#scheduleModalView {
+  .modal-content {
+    //min-height: calc(100vh - 60px);
+    .modal-body {
+      padding: 0;
+
+      iframe {
+        border: 0;
+      }
+    }
+  }
+}
+
+.table {
+  .tr {
+    td, th {
+      font-size: 14px;
+    }
+  }
+}
+#top-main-nav{
+  .navbar-collapse{
+    z-index: 9999;
+    padding: 15px 5px;
+  }
+  .navbar-collapse.show{
+  }
+}
+
+
+.nav-pills {
+  .nav-link.active {
+    background: rgb(25, 111, 167);
+    background: linear-gradient(180deg, rgba(25, 111, 167, 1) 0%, $dark_blue 80%);
+  }
+
+  .show > .nav-link {
+
+  }
+
+  .nav-link {
+    color: $dark_blue;
+  }
+}
+
+.btn-primary {
+  background: rgb(25, 111, 167);
+  background: linear-gradient(180deg, rgba(25, 111, 167, 1) 0%, $dark_blue 80%);
+}
+
+.badge-primary {
+  background: rgb(25, 111, 167);
+  background: linear-gradient(180deg, rgba(25, 111, 167, 1) 0%, $dark_blue 80%);
+}
+
+.text-primary {
+  color: $dark_blue !important;
+}
+
+a {
+  color: $dark_blue;
+}
+
+.sidebar {
+  .collapse-item.active {
+    color: $dark_blue !important;
+  }
+}
+
+.appointment-details.card{
+  .badge{
+    font-size: 90%;
+    padding: 0.40em 0.8em;
+  }
+}
+
+#submit_for_otp{
+  [type="submit"].btn{
+    .spinner-border{
+      display: none;
+    }
+  }
+}

@@ -3,7 +3,7 @@ from django.db import migrations
 
 def create_customtext(apps, schema_editor):
     CustomText = apps.get_model("home", "CustomText")
-    customtext_title = "testapp"
+    customtext_title = "Dawn Sun"
 
     CustomText.objects.create(title=customtext_title)
 
@@ -11,7 +11,7 @@ def create_customtext(apps, schema_editor):
 def create_homepage(apps, schema_editor):
     HomePage = apps.get_model("home", "HomePage")
     homepage_body = """
-        <h1 class="display-4 text-center">testapp</h1>
+        <h1 class="display-4 text-center">Dawn Sun</h1>
         <p class="lead">
             This is the sample application created and deployed from the Crowdbotics app.
             You can view list of packages selected for this application below.
@@ -22,10 +22,10 @@ def create_homepage(apps, schema_editor):
 
 def create_site(apps, schema_editor):
     Site = apps.get_model("sites", "Site")
-    custom_domain = "testapp-25614.botics.co"
+    custom_domain = "dawn-sun-23197.botics.co"
 
     site_params = {
-        "name": "testapp",
+        "name": "Dawn Sun",
     }
     if custom_domain:
         site_params["domain"] = custom_domain

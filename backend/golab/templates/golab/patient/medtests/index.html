@@ -1,0 +1,139 @@
+{% extends 'golab/patient/base.html' %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% block content %}
+    <div class="mt-2 mt-sm-3 mt-md-4 mx-auto px-2" style="max-width: 100%">
+        <div class="card filter-card">
+            <div class="card-header bg-gradient-dark d-flex align-items-center">
+                <div class="mb-0 text-white font-weight-bold">Test Results</div>
+                <button class="btn btn-outline-secondary btn-toggle-filter-box ml-auto d-md-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="card-body p-0 d-none d-md-block">
+                <div class="filter-box container-fluid mt-2 mb-2">
+                    <form method="get" class="row w-100" role="form" id="filter-form">
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.first_name %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.last_name %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.email %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.phone %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.appointment_id %}
+                        </div>
+                        <div class="col-md-3">
+                            {% bootstrap_field filter.form.test_type %}
+                        </div>
+
+                        {#                        {{ filter.form.as_p }}#}
+                        <div class="col-12">
+                            <input type="submit" class="btn btn-primary text-white" value="Search"/>
+                            <a href="{% url 'dashboard:test_results' %}" class="btn btn-reset btn-danger text-white">Reset</a>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="card mt-1">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col">Patient Name</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Appointment ID</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Collection Date</th>
+                            <th scope="col">Processing Date</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Test Type</th>
+                            <th scope="col">Interpretation</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for test in page_obj %}
+                            <tr>
+                                <td style="min-width: 150px">{{ test.acuity_appointment.appointment_data.firstName }}
+                                    {{ test.acuity_appointment.appointment_data.lastName }}</td>
+                                <td style="min-width: 150px">
+                                    <a href="{% url 'golab:test_result_download' test.id %}"
+                                       class="btn btn-sm btn-primary">
+                                        View Results PDF
+                                    </a>
+                                </td>
+                                <td>{{ test.acuity_appointment.acuity_appointment_id }}</td>
+                                <td>{{ test.acuity_appointment.appointment_data.phone }}</td>
+                                <td style="min-width: 150px">{{ test.collection_date|date }}</td>
+                                <td style="min-width: 150px">{{ test.processing_date|date }}</td>
+                                <td>
+                                    {% if test.location %}
+                                        {{ test.location }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ test.get_result_display }}</td>
+                                <td style="max-width: 350px; min-width: 100px">
+                                    {% if test.test_type %}
+                                        <div class="d-flex">
+                                            {% for type in test.test_type.all %}
+                                                <div class="badge badge-primary mb-1 px-1 py-1 mr-1"
+                                                     style="font-size: 14px">{{ type }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td style="min-width: 250px">{{ test.iterpretation }}</td>
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>No Result</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="mt-3 px-2 mb-3">
+                    <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

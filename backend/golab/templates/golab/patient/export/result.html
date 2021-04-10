@@ -1,0 +1,71 @@
+{% load staticfiles %}
+<html>
+<head><meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+span.cls_003{font-family:"Calibri Bold",serif;font-size:18.1px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+div.cls_003{font-family:"Calibri Bold",serif;font-size:18.1px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+span.cls_004{font-family:"Calibri Bold",serif;font-size:11.0px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+div.cls_004{font-family:"Calibri Bold",serif;font-size:11.0px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+span.cls_005{font-family:"Calibri",serif;font-size:11.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+div.cls_005{font-family:"Calibri",serif;font-size:11.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+span.cls_006{font-family:"Calibri Bold",serif;font-size:12.1px;color:rgb(255,254,255);font-weight:bold;font-style:normal;text-decoration: none}
+div.cls_006{font-family:"Calibri Bold",serif;font-size:12.1px;color:rgb(255,254,255);font-weight:bold;font-style:normal;text-decoration: none}
+span.cls_007{font-family:"Calibri Bold",serif;font-size:12.1px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+div.cls_007{font-family:"Calibri Bold",serif;font-size:12.1px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
+span.cls_008{font-family:"Calibri",serif;font-size:12.1px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+div.cls_008{font-family:"Calibri",serif;font-size:12.1px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+span.cls_009{font-family:"Calibri",serif;font-size:10.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+div.cls_009{font-family:"Calibri",serif;font-size:10.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
+span.cls_002{font-family:"Calibri",serif;font-size:5.0px;color:rgb(137,136,137);font-weight:normal;font-style:normal;text-decoration: none}
+div.cls_002{font-family:"Calibri",serif;font-size:5.0px;color:rgb(137,136,137);font-weight:normal;font-style:normal;text-decoration: none}
+-->
+</style>
+</head>
+<body>
+<div style="position:absolute;left:50%;margin-left:-270px;top:0px;width:540px;height:720px;border-style:outset;overflow:hidden">
+<div style="position:absolute;left:0px;top:0px">
+<img src="{% static 'img/export-bg.jpg' %}" width=540 height=720></div>
+<div style="position:absolute;left:175.08px;top:110.64px" class="cls_003"><span class="cls_003">Patient Test Result Report</span></div>
+<div style="position:absolute;left:42.96px;top:164.92px" class="cls_004"><span class="cls_004">Patient Name: </span><span class="cls_005">{{ test.user.first_name }}, {{ test.user.last_name }}</span></div>
+<div style="position:absolute;left:199.12px;top:164.92px" class="cls_004"><span class="cls_004">Collection Date: </span><span class="cls_005">{{ test.collection_date|date }}</span></div>
+<div style="position:absolute;left:355.28px;top:164.92px" class="cls_004"><span class="cls_004">Specimen Type: </span><span class="cls_005">{{ test.specimen_type }}</span></div>
+<div style="position:absolute;left:42.96px;top:178.84px" class="cls_004"><span class="cls_004">DOB: </span><span class="cls_005">{{ test.user.user_profile. }}</span></div>
+<div style="position:absolute;left:199.12px;top:178.84px" class="cls_004"><span class="cls_004">Processing Date: </span><span class="cls_005"> {{ test.processing_date|date }}</span></div>
+<div style="position:absolute;left:355.28px;top:178.84px" class="cls_004"><span class="cls_004">Test Type: </span><span class="cls_005">
+    {{ test.user.user_profile.date_of_birth }}, 
+</span></div>
+<div style="position:absolute;left:42.96px;top:191.80px" class="cls_004"><span class="cls_004">Sex:</span><span class="cls_005"> {{ test.user.user_profile.gender }}</span></div>
+<div style="position:absolute;left:199.12px;top:191.80px" class="cls_004"><span class="cls_004">Location</span><span class="cls_005">: {{ test.location }}</span></div>
+<div style="position:absolute;left:102.21px;top:255.12px" class="cls_006"><span class="cls_006">TEST</span></div>
+<div style="position:absolute;left:251.87px;top:255.12px" class="cls_006"><span class="cls_006">RESULT</span></div>
+<div style="position:absolute;left:383.48px;top:255.12px" class="cls_006"><span class="cls_006">INTERPRETATION</span></div>
+<div style="position:absolute;left:42.96px;top:280.56px" class="cls_007"><span class="cls_007">SARS-CoV-2, Antigen Test</span></div>
+<div style="position:absolute;left:199.12px;top:280.56px" class="cls_007"><span class="cls_007">NOT DETECTED*</span></div>
+<div style="position:absolute;left:355.28px;top:280.56px" class="cls_008"><span class="cls_008">SARS-CoV-2 was not</span></div>
+<div style="position:absolute;left:355.28px;top:295.44px" class="cls_008"><span class="cls_008">detected in your sample**</span></div>
+<div style="position:absolute;left:42.96px;top:343.76px" class="cls_009"><span class="cls_009">* SARS-Cov-2 is considered a notifiable condition under Washington Administrative Code (WAC) 246-101,</span></div>
+<div style="position:absolute;left:42.96px;top:355.76px" class="cls_009"><span class="cls_009">Notifiable Conditions. Results for COVID-19 testing will be reported to the Washington State Department of</span></div>
+<div style="position:absolute;left:42.96px;top:367.76px" class="cls_009"><span class="cls_009">Health as required by law.</span></div>
+<div style="position:absolute;left:42.96px;top:379.76px" class="cls_009"><span class="cls_009">** Refer to the attached FDA Fact Sheet included with this report for more information regarding testing,</span></div>
+<div style="position:absolute;left:42.96px;top:391.76px" class="cls_009"><span class="cls_009">intended use and interpretation of results. For further questions regarding this result, consultation with your</span></div>
+<div style="position:absolute;left:42.96px;top:403.76px" class="cls_009"><span class="cls_009">primary care physician is recommended.</span></div>
+<div style="position:absolute;left:42.96px;top:436.88px" class="cls_009"><span class="cls_009">(1)  An anterior nares or mid-turbinate specimen collected by a healthcare professional or self-collected by the</span></div>
+<div style="position:absolute;left:60.96px;top:448.88px" class="cls_009"><span class="cls_009">patient is acceptable when the patient is in an appropriate clinical setting or under appropriate</span></div>
+<div style="position:absolute;left:327.05px;top:459.88px" class="cls_002"><span class="cls_002">1</span></div>
+<div style="position:absolute;left:60.96px;top:460.88px" class="cls_009"><span class="cls_009">observation.</span></div>
+<div style="position:absolute;left:42.96px;top:472.88px" class="cls_009"><span class="cls_009">(2)  This test is not yet approved or cleared by the United States FDA. When there are no FDA-approved or</span></div>
+<div style="position:absolute;left:60.96px;top:484.88px" class="cls_009"><span class="cls_009">cleared tests available, and other criteria are met, FDA can make tests available under an emergency</span></div>
+<div style="position:absolute;left:60.96px;top:496.88px" class="cls_009"><span class="cls_009">access mechanism called an Emergency Use Authorization (EUA), for use in authorized laboratories. The</span></div>
+<div style="position:absolute;left:60.96px;top:508.88px" class="cls_009"><span class="cls_009">EUA for this test is supported by the Secretary of Health and Human Service’s (HHS’s) declaration that</span></div>
+<div style="position:absolute;left:60.96px;top:520.88px" class="cls_009"><span class="cls_009">circumstances exist to justify the emergency use of in vitro diagnostics for the detection and/or diagnosis</span></div>
+<div style="position:absolute;left:60.96px;top:532.88px" class="cls_009"><span class="cls_009">of the virus that causes COVID-19. This EUA will remain in effect for the duration of the COVID-19</span></div>
+<div style="position:absolute;left:60.96px;top:544.88px" class="cls_009"><span class="cls_009">declaration justifying emergency of IVDs, under Section 564(b)(1) of the Act 21, U.S.C. § 360bbb-3(b)(1),</span></div>
+<div style="position:absolute;left:60.96px;top:556.88px" class="cls_009"><span class="cls_009">unless the authorization is terminated or revoked sooner.</span></div>
+<div style="position:absolute;left:42.96px;top:682.36px" class="cls_005"><span class="cls_005">GoLab CLIA # 50D2189165</span></div>
+<div style="position:absolute;left:221.06px;top:681.40px" class="cls_005"><span class="cls_005"> </span><A HREF="http://www.golabsolutions.com/">www.GoLabSolutions.com</A> </div>
+<div style="position:absolute;left:430.50px;top:681.16px" class="cls_005"><span class="cls_005">Page 1 of ____</span></div>
+</div>
+
+</body>
+</html>

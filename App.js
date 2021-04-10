@@ -1,72 +1,64 @@
-import React from "react";
-import { Provider } from "react-redux";
-import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from '@react-navigation/stack';
-import { configureStore, createReducer, combineReducers } from "@reduxjs/toolkit";
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {Provider as ReduxProvider} from 'react-redux';
 
-import { screens } from "@screens";
-import { hooks, slices, navigators, initialRoute } from "@modules";
+import SplashScreen from './src/features/SplashScreen';
+import {store} from './src/store';
+import NavigatorProvider from './src/navigator/mainNavigator';
+import {setupHttpConfig} from './src/utils/http';
+import * as NavigationService from './src/navigator/NavigationService';
 
-const Stack = createStackNavigator();
+export default class App extends React.Component {
+  state = {
+    isLoaded: false,
+  };
 
-const getNavigation = (modules, screens, initialRoute) => {
-  const Navigation = () => {
-    const routes = modules.concat(screens).map(([name, navigator]) => {
-      return (
-        <Stack.Screen key={name} name={name} component={navigator} />
-      )
-    });
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName={initialRoute}>
-          {routes}
-        </Stack.Navigator>
-      </NavigationContainer>
-    )
-  }
-  return Navigation;
-}
-
-const getStore = slices => {
-  const reducers = Object.fromEntries(slices.map(([name, slice]) => [name, slice.reducer]));
-
-  const appState = {
-    name: "testapp_25614Identifier",
-    url: "https://testapp_25614Identifier.botics.co",
-    version: "1.0.0"
+  async componentWillMount() {
+    /**
+     * add any aditional app config here,
+     * don't use blocking requests here like HTTP requests since they block UI feedback
+     * create HTTP requests and other blocking requests using redux saga
+     */
+    await this.loadAssets();
+    setupHttpConfig();
   }
 
-  const appReducer = createReducer(appState, _ => {
-    return appState;
-  })
+  componentDidMount() {
+    /**
+     * Read above commments above adding async requests here
+     */
+    NavigationService.setNavigator(this.navigator);
+  }
 
-  const reducer = combineReducers({
-    app: appReducer,
-    ...reducers
-  });
+  loadAssets = async () => {
+    // add any loading assets here
+    this.setState({isLoaded: true});
+  };
 
-  return configureStore({
-    reducer: reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-  });
-}
-
-
-const App = () => {
-  const Navigation = getNavigation(navigators, screens, initialRoute);
-  const store = getStore(slices);
-
-  let effects = {};
-  hooks.map(([_, hook]) => {
-    effects[hook.name] = hook();
-  });
-
-  return (
-    <Provider store={store}>
-      <Navigation />
-    </Provider>
+  renderLoading = () => (
+    <View style={[styles.flex]}>
+      <Text>Loading</Text>
+    </View>
   );
-};
 
-export default App;
+  renderApp = () => (
+    <ReduxProvider store={store}>
+      <NavigatorProvider
+        style={styles.flex}
+        ref={(nav) => {
+          this.navigator = nav;
+        }}>
+        <View style={[styles.flex]}>
+          <SplashScreen />
+        </View>
+      </NavigatorProvider>
+    </ReduxProvider>
+  );
+
+  render = () =>
+    this.state.isLoaded ? this.renderApp() : this.renderLoading();
+}
+
+const styles = StyleSheet.create({
+  flex: {flex: 1},
+});

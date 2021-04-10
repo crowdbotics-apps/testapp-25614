@@ -1,0 +1,93 @@
+{#{% extends "account/base.html" %}#}
+{% extends "dashboard/base.html" %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+{% block body_class %}bg-gradient-dark{% endblock %}
+{% block content %}
+    <div class="d-flex align-items-center align-content-center w-100" style="min-height: 100vh">
+        <div class="container">
+
+            <!-- Outer Row -->
+            <div class="row justify-content-center">
+
+                <div class="col-12 text-center">
+
+                    <div class="card o-hidden border-0 shadow-lg my-5 mx-auto" style="max-width: 450px">
+                        <div class="card-body py-5 px-3">
+                            <div class="text-center position-relative d-flex mb-3">
+                                <img class="img-fluid h-auto w-auto mx-auto" src=
+                                        "{% static 'img/golab-fin-transparent-01.png' %}"
+                                     style="max-height: 50px"
+                                     alt="GoLab">
+                            </div>
+                            <!-- Nested Row within Card Body -->
+                            <div class="text-center">
+                                <div class="h4 text-primary font-weight-bold mb-4 text-center text-uppercase">
+                                    {% trans "Sign In" %}</div>
+                            </div>
+                            {% if form.errors %}
+                                <div class="show-error mb-2">
+                                    {% for error in form.non_field_errors %}
+{#                                        {{ error }}#}
+                                        <div class="invalid-feedback d-block w-100">
+                                            <strong>{{ error|escape }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            {% endif %}
+                            <form class="login" method="POST" action="{% url 'account_login' %}"
+                                  novalidate>
+
+                                {% csrf_token %}
+                                {% if redirect_field_value %}
+                                    <input type="hidden" name="{{ redirect_field_name }}"
+                                           value="{{ redirect_field_value }}"/>
+                                {% endif %}
+                                <div class="form-group text-left {% if form.login.errors %}has-error{% endif %}">
+                                    {% bootstrap_field form.login show_label=False %}
+                                    {% if form.login.errors %}
+                                        {% for error in form.login.errors %}
+                                            <div class="invalid-feedback">
+                                                <strong>{{ error|escape }}</strong>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group text-left
+{% if form.password.errors %}has-error{% endif %}">
+                                    {% bootstrap_field form.password show_label=False %}
+                                </div>
+                                <div class="form-group text-left">
+                                    <div class="custom-control custom-checkbox small">
+                                        <input type="checkbox" class="custom-control-input"
+                                               id="customCheck">
+                                        <label class="custom-control-label" for="customCheck">
+                                            Remember Me</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-user btn-block"
+                                        type="submit">{% trans "Sign In" %}</button>
+
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small"
+                                   href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+

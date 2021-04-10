@@ -1,0 +1,285 @@
+{% extends 'dashboard/base.html' %}
+{% load dashboard_tags %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="card mb-3">
+            <div class="card-header bg-gradient-dark-blue text-white d-flex align-items-center">
+                <div>{{ appointment.firstName }} {{ appointment.lastName }}</div>
+                {% if request.user.is_staff and not request.user.is_patient %}
+                    <div class="btn btn-sm btn-primary ml-auto btn-open-info-modal" data-appointment="
+{{ appointment.id }}">Update
+                    </div>
+                {% endif %}
+
+            </div>
+            <div class="card-body">
+                <div class="card-text">Email: <span class="text-primary font-weight-bold">{{ appointment.email }}</span>
+                </div>
+                <div class="card-text">Phone: <span class="text-primary font-weight-bold"
+                >{{ appointment.phone }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="card appointment-details">
+            <div class="card-header bg-gradient-dark-blue text-white d-flex flex-row">
+                {#                {% print_acuity_timestamp appointment.datetimeCreated as datetimeCreated %}#}
+                <span>Appointment Details</span>
+
+            </div>
+            <div class="card-body">
+                <table class="table mb-3 table-borderless table-sm">
+                    <tr>
+                        <td class="pl-0">Credated at:</td>
+                        <td><strong class="text-primary">
+                            {{ appointment.datetimeCreated|print_acuity_timestamp|date:'d M Y, h:i:s a' }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-0">Type:</td>
+                        <td><strong class="text-primary">
+                            {{ appointment.type }}</strong></td>
+
+                    </tr>
+                    <tr>
+                        <td class="pl-0">Calendar:</td>
+                        <td><strong class="text-primary">
+                            {{ appointment.calendar }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-0">Category:</td>
+                        <td><strong class="text-primary">
+                            {{ appointment.category }}</strong></td>
+                    </tr>
+                </table>
+
+                <div class="row mb-2">
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Date
+                                <span class="badge badge-primary">{{ appointment.date }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Time
+                                <span class="badge badge-primary">{{ appointment.time }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                End Time
+                                <span class="badge badge-primary">{{ appointment.endTime }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Price
+                                <span class="badge badge-primary">{{ appointment.price }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Paid
+                                <span class="badge badge-primary">{{ appointment.paid }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Amount Paid
+                                <span class="badge badge-primary">{{ appointment.amountPaid }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Canceled
+                                <span class="badge
+                                {% if appointment.canceled %}badge-success{% else %}badge-secondary{% endif %}">
+                                {% if appointment.canceled %}Yes{% else %}No{% endif %}
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Can client Cancel?
+                                <span class="badge
+                                 {% if appointment.canClientCancel %}badge-success{% else %}badge-secondary{% endif %}">
+                                    {% if appointment.canClientCancel %}Yes{% else %}No{% endif %}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1">
+                                Can client reschedule?
+                                <span class="badge
+                                    {% if appointment.canClientReschedule %}badge-success{% else %}badge-secondary{% endif %}">
+                                    {% if appointment.canClientReschedule %}Yes{% else %}No{% endif %}</span>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+                <div class="location mt-3">Location: <strong class="text-dark">{{ appointment.location }}</strong></div>
+                {% if appointment.forms %}
+                    <hr>
+                    <div class="custom-form-data">
+                        <div class="text-primary font-weight-bold" style="font-size: 18px">Form Values</div>
+                        {% for form in appointment.forms %}
+                            <div class="text-dark font-weight-bold">{{ forloop.counter }}. {{ form.name }}</div>
+                            <div class="form-values ml-2">
+                                {% for field in form.values %}
+                                    <div class="mb-1" id="form-fieldID-{{ field.fieldID }}">
+                                        {{ field.name }}: <br><strong class="text-primary">{{ field.value }}</strong>
+                                    </div>
+                                    <hr>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="notes">
+                    <div class="text-primary mb-2">Notes:</div>
+                    <div class="alert alert-secondary">
+                        {% if appointment.notes %}
+                            {{ appointment.notes }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="info-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form id="apppointmentUserUpdateForm">
+                {% csrf_token %}
+                <div class="modal-content">
+
+                    <div class="modal-header bg-gradient-dark-blue text-white">
+                        <h5 class="modal-title">Update info</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center show-spinner">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="form-success"></div>
+                        <div class="form-errors d-none"></div>
+                        <div class="form-data d-none">
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="editFirstName" class="form-control" name="firstName"
+                                           placeholder="First
+                                    Name">
+                                </div>
+                                <div class="col form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" id="editLastName" class="form-control" name="lastName"
+                                           placeholder="Last Name">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="editEmail" class="form-control" name="email"
+                                           placeholder="Email">
+                                </div>
+                                <div class="col form-group">
+                                    <label>Phone</label>
+                                    <input type="tel" id="editPhone" class="form-control" name="phone"
+                                           placeholder="Phone Number">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).on('click', '.btn-open-info-modal', function (event) {
+            let el_modal = $('#info-modal');
+            el_modal.find('.form-success').html('');
+            el_modal.modal('show');
+
+            $.ajax({
+                method: 'get',
+                url: '{% url 'api_dashboard:appointment_detail' appointment.id %}',
+                success: function (res) {
+                    console.log(res);
+                    let firstName = res.firstName;
+                    let lastName = res.lastName;
+                    let email = res.email;
+                    let phone = res.phone;
+                    $('#editFirstName').val(firstName);
+                    $('#editLastName').val(lastName);
+                    $('#editEmail').val(email);
+                    $('#editPhone').val(phone);
+                    el_modal.find('.show-spinner').hide();
+                    el_modal.find('.modal-body .form-data').removeClass('d-none');
+
+
+                },
+                error: function (xhr, statusText, err) {
+                    console.log(xhr.responseJSON);
+                    console.log(statusText);
+                    console.log(err);
+                    el_modal.find('.show-spinner').hide();
+                    if (err === 'Forbidden') {
+                        el_modal.find('.form-errors').removeClass('d-none');
+                        el_modal.find('.form-errors').html(
+                            `<div class="alert alert-danger">${xhr.responseJSON.detail}</div>`
+                        )
+                    }
+
+                }
+            })
+        });
+        $('#info-modal').on('hidden.bs.modal', function (e) {
+            let el_modal = $('#info-modal');
+            $('#editFirstName').val('');
+            $('#editLastName').val('');
+            $('#editEmail').val('');
+            $('#editPhone').val('');
+            el_modal.find('.show-spinner').show();
+            el_modal.find('.form-errors').addClass('d-none');
+            el_modal.find('.modal-body .form-data').addClass('d-none')
+        });
+        $(document).on('submit', '#apppointmentUserUpdateForm', function (event) {
+
+            event.preventDefault();
+            let el_modal = $('#info-modal');
+            let formData = $(this).serialize();
+            {#console.log(formData);#}
+            $.ajax({
+                method: 'post',
+                url: '{% url 'api_dashboard:appointment_detail' appointment.id %}',
+                data: formData,
+                dataType: 'json',
+                success: function (res) {
+                    {#console.log(res);#}
+                    el_modal.find('.form-errors').addClass('d-none');
+                    el_modal.find('.form-errors').html('');
+                    el_modal.find('.form-success').html(
+                        `<div class="alert alert-success">Appointment updated successfully.</div>`
+                    );
+                    setTimeout(function (){
+                       el_modal.modal('hide');
+                    }, 1000)
+                },
+                error: function (err) {
+                    {#console.log(err.responseJSON.message);#}
+                    el_modal.find('.form-errors').removeClass('d-none');
+                    el_modal.find('.form-errors').html(
+                        `<div class="alert alert-danger">${err.responseJSON.message}</div>`
+                    )
+                }
+            })
+        })
+    </script>
+{% endblock %}

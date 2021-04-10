@@ -1,0 +1,30 @@
+{% extends 'golab/patient/base.html' %}
+{% load i18n %}
+{% load bootstrap4 %}
+{% load widget_tweaks %}
+{% block title %}
+    {{ request.user.username }} | Info
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                {% include 'golab/patient/snippets/profile_nav.html' %}
+                <div class="tab-content">
+                    <h3>{% trans "Profile Info" %}</h3>
+                    {% bootstrap_messages %}
+                    <form class="text-left" method="POST" action="{% url 'golab:logged_patient_profile_info' %}">
+                        {% csrf_token %}
+                        {% bootstrap_field form.date_of_birth|attr:"type:date" %}
+                        {% bootstrap_field form.gender %}
+                        {% bootstrap_field form.contact_number|attr:"type:tel" %}
+                        {% bootstrap_field form.zip_code %}
+                        {% bootstrap_field form.street_address %}
+                        <button type="submit" name="action"
+                                class="btn btn-primary btn-block">{% trans "Update" %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
